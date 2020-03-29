@@ -91,7 +91,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 3:
         print("usage: %s <dbname> <file|dir>" % (sys.argv[0]))
         sys.exit(1)
-    con = connect_or_create\(sys.argv[1])
+    con = connect_or_create(sys.argv[1])
     if os.path.isdir(sys.argv[2]):
         inject_dir(con, sys.argv[2])
         con.commit()
