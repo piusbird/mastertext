@@ -10,7 +10,7 @@ import hashlib
 import sqlite3
 import socket
 from datetime import datetime
-from mastertext.common import *
+from mastertext.v0.common import *
 # We assume that if the database file already
 # exists then the proper schema is in place
 # I might wanna fix that sooner or later
@@ -35,20 +35,6 @@ ijqs = "INSERT INTO hive VALUES (?,?,?,?)"
 # The only reason it should happen is if the texts concerned
 # are either identical to or variants of one another
 # hence the 1k sample size
-
-def sample_buffer(buf):
-
-    m = hashlib.blake2b()
-    smpEnd = SAMPLE_SIZE - 1
-    sample = buf if len(buf) < SAMPLE_SIZE else buf[0:smpEnd]
-    try:
-        m.update(sample.encode('utf-8'))
-    except:
-         clean = sample.decode('iso-8859-1')
-         m.update(clean.encode('utf-8'))
-
-    return m.hexdigest()
-
 
 def inject_file(dbc, fname):
 
