@@ -81,3 +81,4 @@ def dedup_dealloc(items):
     for i in items:
         print("Delete ", i)
         q = Hive.delete().where(Hive.rowid == i)
+        q.execute()
