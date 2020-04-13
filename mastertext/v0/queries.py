@@ -16,7 +16,6 @@ There is a life lesson herein and that is to **always** THINK then CODE
 """
 
 
-
 SAMPLE_SIZE = 1024
 ijqs = "INSERT INTO hive VALUES (?,?,?,?)"
 
@@ -34,25 +33,20 @@ ijqs = "INSERT INTO hive VALUES (?,?,?,?)"
 # hence the 1k sample size
 
 
-
 def insert_text(dbc, text):
 
     ourhost = os.getenv("mt_host", socket.gethostname())
     ds = datetime.now().strftime("%F")
-	try:
-		buf = text.decode('utf-8')
-	except UnicodeDecodeError as e:
-		buf = text.decode('iso-8859-1').encode('utf8')
+    try:
+        buf = text.decode('utf-8')
+    except UnicodeDecodeError as e:
+        buf = text.decode('iso-8859-1').encode('utf8')
 
-	c = dbc.cursor()
-	hashid = sample_buffer(buf)
-	c.execute(ijqs, (hashid,ds,ourhost,buf))
-	return hashid
+        c = dbc.cursor()
+        hashid = sample_buffer(buf)
+        c.execute(ijqs, (hashid, ds,ourhost,buf))
+        return hashid
 
-
-
-
-		
 
 # The Old id generator
 # Wrote it before i knew what i was doing
@@ -62,7 +56,7 @@ def insert_text(dbc, text):
 # with a 1k sample results in more collisions
 # then i wanted
 
-# so we will have to ditch the collision plan 
+# so we will have to ditch the collision plan
 # and implement diff/compare properly when we need it
 def old_id_gen(buf):
 
@@ -72,17 +66,7 @@ def old_id_gen(buf):
     try:
         m.update(sample.encode('utf-8'))
     except:
-         clean = sample.decode('iso-8859-1')
-         m.update(clean.encode('utf-8'))
+        clean = sample.decode('iso-8859-1')
+        m.update(clean.encode('utf-8'))
 
     return m.hexdigest()
-
-
-
-
-
-
-
-
-
-

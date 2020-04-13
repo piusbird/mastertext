@@ -40,11 +40,13 @@ def create_or_connect(fpath):
         pass
     return sqlite3.connect(fpath)
 
+
 def strict_connect(fpath):
 
     if exists(fpath):
         return sqlite3.connect(fpath)
     else:
         raise MasterTextError("db does not exist, strict mode")
+
 
 connect_or_create = create_or_connect
