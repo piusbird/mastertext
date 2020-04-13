@@ -2,6 +2,10 @@
 from peewee import *
 from mastertext.models import *
 from mastertext.utils import *
+
+fsck_queries = {
+	'link_table_rebuild':"select hashid from hive where hashid not in (select phash from link);"
+	}
 """
 This function fixes a databse corruption issue
 that happens in a couple of different ways
@@ -55,7 +59,20 @@ def fix_encoding(bad_rowid):
 	u = Hive.update(data=fix).where(Hive.rowid == bad_rowid)
 	return u.execute()
 
-
+# UGLY HACK WARNING Woohp Woohp
+# Didn't know what i was doing the first 
+# so I had to redesign the db without losing
+# any data in it, this should be the last such 
+# function before we get started on the meet of the app
+def rebuild_link_table():
+	"""
+	Rebuild a damaged on missing link table
+	dedup should run first if needed
+	"""
+	q = database.execute_sql(fsck_queries['link_table_rebuild'])
+	for r in q.fetchall():
+		print("linking " + str(r[0]) )
+		Link.create(phash=str(r[0]), count=1)
 
 
 

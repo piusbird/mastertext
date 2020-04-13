@@ -1,3 +1,4 @@
+*.bak
 *.save
 .vscode
 # Byte-compiled / optimized / DLL files
