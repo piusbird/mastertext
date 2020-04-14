@@ -1,47 +1,20 @@
-#!/usr/bin/env python2
-# Minimal KDE Klipper service emulator
-# For GNOME, XFCE, LXDE and MATE
-# Part of the Very Shitty Speech Setup
-
-"""
-Copyright (c) 2014 Matt Arnold
-#
-# Permission to use, copy, modify, and/or distribute this software
-# for any purpose with or without fee is hereby granted,
-# provided that the above copyright
-# notice and this permission notice appear in all copies.
-# AND WITH THE STIPULATION THAT
-
-# By distributing this software, you waive any legal power to
-# forbid circumvention of technological measures
-# to the extent such circumvention is effected by exercising rights under
-# this License with respect to the covered work,
-# and you disclaim any intention to limit operation or
-# modification of the work as a means of enforcing,
-# against the work's users, your or third parties'
-# legal rights to forbid circumvention of technological measures.
-
-# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
-# OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR
-# BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES
-# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
-# DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
-# NEGLIGENCE OR OTHER TORTIOUS ACTION,
-# ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE
-
-"""
-
-from gi.repository import Gtk, Gdk
-import dbus
-import dbus.service
-from dbus.mainloop.glib import DBusGMainLoop
-import os
-import sys
-import signal
-import fileinput
+#!/usr/bin/env python3
+# Mastertext Cliboard manager
+from mastertext.utils import sha1_id_object
+from mastertext.objectstore import *
 import re
-import pickle
+import fileinput
+import signal
+import sys
+import os
+from dbus.mainloop.glib import DBusGMainLoop
+import dbus.service
+import dbus
+from gi.repository import Gtk, Gdk
+import gi
+gi.require_version('Gtk', '3.0')
+
+END_OF_STACK = 'deadbeef' * 5
 
 
 class NullDevice:
@@ -60,6 +33,11 @@ class MiniKlipper(dbus.service.Object):
         dbus.service.Object.__init__(self, bus_name, '/org/marnold/mklip')
         self.boardxs = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         self.amal_buffer = None
+        self.textstore = TextObjectStore()
+        self.hashstack = []
+        self.hashstack.append(END_OF_STACK)
+        self.forwardstack = []
+        self.forwardstack.append(END_OF_STACK)
 
     @dbus.service.method('org.marnold.mklip')
     def getClipboardContents(self):
@@ -67,6 +45,10 @@ class MiniKlipper(dbus.service.Object):
         text = self.boardxs.wait_for_text()
         if text == None:
             return "Nothing to read"
+        thishash = sha1_id_object(text)
+        if thishash != self.hashstack[-1]:
+            self.textstore.create_object(text)
+            self.hashstack.append(thishash)
         return text
 
     @dbus.service.method('org.marnold.mklip')
@@ -74,16 +56,6 @@ class MiniKlipper(dbus.service.Object):
 
         pidstr = str(os.getpid())
         return pidstr
-
-    @dbus.service.method('org.marnold.mklip')
-    def getFilteredContent(self, stSrc, stEnd):
-
-        retStr = ""
-
-        for line in fileinput.input():
-            line = re.sub(stSrc, stEnd, line.rstrip())
-            retStr += line
-            return retStr
 
     @dbus.service.method("org.marnold.mklip")
     def getAmalgamatedBuffer(self):
@@ -108,34 +80,61 @@ class MiniKlipper(dbus.service.Object):
         self.toAmalgmatedBuffer(self.getClipboardContents())
 
     @dbus.service.method("org.marnold.mklip")
-    def autoprocClipboardContents(self):
-        text = self.boardxs.wait_for_text()
-        if text == None:
-            return "Nothing to Read."
-        fl = None
-        try:
-            fl = pickle.load(open("filter.p", "rb"))
-            newtxt = text
-            for f in fl:
-                newtxt = f.sub("filtered, see visual mode.", newtxt)
-            return newtxt
-        except IOError as e:
-            return "error could not find filter rules."
-        return "shouldn't be here."
+    def goBack(self):
+        if self.hashstack[-1] == END_OF_STACK:
+            return "at last item"
+        else:
+            ourhash = self.hashstack[-1]
+            self.forwardstack.append(self.hashstack.pop())
+            return self.textstore.retrieve_object(ourhash)
+
+    @dbus.service.method("org.marnold.mklip")
+    def goForward(self):
+        if self.forwardstack[-1] == END_OF_STACK:
+            return "at first item"
+        else:
+            ourhash = self.forwardstack[-1]
+            self.hashstack.append(self.forwardstack.pop())
+            return self.textstore.retrieve_object(ourhash)
+
+    @dbus.service.method("org.marnold.mklip")
+    def getHashid(self, hashid):
+        if valid_hash(hashid):
+            try:
+                s = self.textstore.retrieve_object(hashid)
+                return s
+            except ObjectNotFoundError as e:
+                return hashid + " not found"
+        else:
+            return "Not a valid hash"
+
+    @dbus.service.method("org.marnold.mklip")
+    def hiveSearch(self, term):
+        result = self.textstore.search_text(term)
+        if result['count'] < 1:
+            return "0 results for " + term
+        else:
+            nwstack = reversed(result['ids'])
+            self.hashstack.extend(nwstack)
+            return str(result['count']) + " documents on the stack"
 
 
-pid = os.fork()  # Hmmm this looks an awful lot like... C
+pid = os.fork()
 
 if pid:
     os._exit(0)  # kill the parent
 else:
-    # directions say this will stop exceptions while
-    # deamonized. Which would be bad
+    # Sets the child process as the pgroup leader
+    # which we need to do or we will get killed off
+    # when our parent process exits
+
     os.setpgrp()
-    os.umask(0)
+    os.umask(0)  # set minimal permissions on all files created from here on
 
     print(os.getpid())  # to aid in stoping the server
-    # Run silent, run deep
+    # Finally we close our connection to the controlling terminal
+    # Since in python that's difficult to do without issues
+    # we change stdout and stderr to a Null file like object
     sys.stdin.close()
     sys.stdout = NullDevice()
     sys.stderr = NullDevice()
