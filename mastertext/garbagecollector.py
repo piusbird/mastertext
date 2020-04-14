@@ -1,5 +1,5 @@
 # MasterText Garbage Collector
-from mastertext.models import *
+from mastertext.models import Link, Hive
 import peewee
 """
 We Intened to build a content addressable file system from our Database schema;

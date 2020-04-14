@@ -1,7 +1,11 @@
-from peewee import *
-from playhouse.sqlite_ext import *
-
-database = SqliteExtDatabase('/home/matt/master.db')
+from peewee import Model, BareField
+from peewee import CharField, IntegerField
+from peewee import ForeignKeyField, CompositeKey
+from playhouse.sqlite_ext import SqliteExtDatabase
+from playhouse.sqlite_ext import RowIDField, SearchField
+from playhouse.sqlite_ext import BlobField, FTS5Model
+from mastertext.settings import dbpath
+database = SqliteExtDatabase(dbpath) # set database at run time 
 
 class UnknownField(object):
     def __init__(self, *_, **__): pass
