@@ -2,7 +2,6 @@ entrypoints==0.3
 flake8==3.7.9
 mccabe==0.6.1
 peewee==3.13.2
-pkg-resources==0.0.0
 pycodestyle==2.5.0
 pyflakes==2.1.1
 python-dotenv==0.12.0

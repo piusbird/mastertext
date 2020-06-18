@@ -75,3 +75,12 @@ class HiveIdx(BaseModel):
 class Link(BaseModel):
     phash = CharField(max_length=40, unique=True, primary_key=True)
     count = IntegerField(null=False, default=0)
+
+class Bookmark(BaseModel):
+    phash = CharField(max_length=40, unique=False)
+    name = CharField(max_length=250, unique=True, primary_key=True)
+
+class Annotation(BaseModel):
+    notehash = CharField(max_length=40, unique=False)
+    phash = CharField(max_length=40, unique=False)
+    npos = IntegerField(null=False)
