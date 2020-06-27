@@ -11,7 +11,7 @@ ts = TextObjectStore()
 def inject_file(fname, **kwargs):
     
     if os.path.isfile(fname):
-        
+        print(fname)
         fp = open(fname, 'rb')
         buffer = fp.read()
         
@@ -32,7 +32,7 @@ def crawl_dir(mydir):
         contents = os.listdir()
         for f in contents:
             try:
-                inject_file(f)
+                print(inject_file(f))
             except IOError as e:
                 if os.path.isdir(f):
                     subs.append(f)
