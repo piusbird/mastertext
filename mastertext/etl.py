@@ -10,7 +10,7 @@ ts = TextObjectStore()
 
 def inject_file(fname, **kwargs):
     
-    if os.path.isfile(fname):
+    if os.path.isfile(fname) or (os.path.islink(fname) and os.path.isfile(os.readlink(fname))):
         print(fname)
         fp = open(fname, 'rb')
         buffer = fp.read()
@@ -19,11 +19,14 @@ def inject_file(fname, **kwargs):
             txt = buffer.decode('utf-8')
         except UnicodeDecodeError:
             txt = buffer.decode('iso-8859-1').encode('utf8')
-        return ts.create_object(txt,kwargs)        
+        return ts.create_object(txt,kwargs)
+        if 'destroy' in kwargs:
+            if kwargs['destroy']:
+                os.unlink(fname)        
     else:
-        raise IOError("Not A regular file")
+        raise IOError("Not A regular file: " + fname)
 
-def crawl_dir(mydir):
+def crawl_dir(mydir, dest):
 
     top = os.getcwd()
     subs = []
@@ -32,7 +35,7 @@ def crawl_dir(mydir):
         contents = os.listdir()
         for f in contents:
             try:
-                print(inject_file(f))
+                print(inject_file(f, destroy=dest))
             except IOError as e:
                 if os.path.isdir(f):
                     subs.append(f)

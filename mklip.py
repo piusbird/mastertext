@@ -7,12 +7,12 @@ import fileinput
 import signal
 import sys
 import os
+import gi
+gi.require_version('Gtk', '3.0')
 from dbus.mainloop.glib import DBusGMainLoop
 import dbus.service
 import dbus
 from gi.repository import Gtk, Gdk
-import gi
-gi.require_version('Gtk', '3.0')
 
 END_OF_STACK = 'deadbeef' * 5
 

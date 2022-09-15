@@ -107,7 +107,7 @@ class TextObjectStore:
         Returns a dict contianing the documents hash-id, and the current 
         value of reference counter.
 
-        Should not raise execptions under any known conditions  
+        Will raise a type error if data to be injected is not text  
         """
         newhash = sha1_id_object(data)
         try:
