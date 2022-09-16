@@ -1,0 +1,46 @@
+.main-content {
+      font-family: cursive, sans-serif;
+      font-size: 20px;
+      font-weight: bolder;
+      font-style: italic;
+}
+
+.sidebar {
+      font-family: cursive, sans-serif;
+      font-size: 1.3rem;
+      font-weight: bolder;
+      font-style: italic;
+      align: left;
+}
+
+body {
+	margin:40px auto;
+	max-width:66%;
+	line-height:1.6;
+	font-family:monospace;
+	font-size:16px;
+	color:#e5eafa;
+	background:#093824;
+	padding:0 10px
+}
+
+h1,h2,h3{
+	line-height:1.2;
+}
+
+h1 {
+	text-align: center;
+	margin-bottom: 1em;
+}
+
+a {
+	color: #FCE94F;
+	font-weight: 600;
+}
+
+
+.cm {
+        border: 2px solid #FCE93C;
+	border-radius: 25px;
+}
+

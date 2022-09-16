@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+{% if title %}
+ <title>{{ title }} - MasterText</title>
+{% else %}
+  <title> Welcome to Mastertext </title>
+{% endif %}
+</head>
+
+<body>
+<div class="navbar"> <a href="/index"> Home </a> </div>
+<hr>
+<div class="app-content"> {% block content %}{% endblock %} </div>
+</body>
+</html>
