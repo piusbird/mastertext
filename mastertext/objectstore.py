@@ -168,3 +168,7 @@ class TextObjectStore:
             return {'hash': hashid, 'count': oldcount}
         except:
             return {"hash": hashid, "count": -1}
+    
+    def sample_object(self, hashid):
+        o = self.retrieve_object(hashid)
+        return o[0:399]

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<h1> Hi {{ user.username }} </h1>
-<h2> Here are the latest entries </h2>
-{% for item in newstuff %}
+<h1> Results for {{metadata.query}} </h1>
+{% for item in srs %}
 <p><strong>{{item.date}}</strong> | <a href="/d/{{item.id}}"> {{ item.id }}</a></p>
 <div class="cm"> {{item.sample|markdown}} </div>
 <hr>
 {% endfor %}
 
 {% endblock %}
+
