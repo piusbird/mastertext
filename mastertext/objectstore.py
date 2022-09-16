@@ -116,6 +116,7 @@ class TextObjectStore:
             lh = Link.get(Link.phash == newhash)
             lh.count += 1
             lh.save()
+            Hive.update(inject_date=str(datetime.now())).where(Hive.hashid == newhash)
             if not orphen:
                 return {'hash': lh.phash, 'count': lh.count}
 
