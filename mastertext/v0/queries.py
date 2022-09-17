@@ -44,7 +44,7 @@ def insert_text(dbc, text):
 
         c = dbc.cursor()
         hashid = sample_buffer(buf)
-        c.execute(ijqs, (hashid, ds,ourhost,buf))
+        c.execute(ijqs, (hashid, ds, ourhost, buf))
         return hashid
 
 

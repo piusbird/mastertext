@@ -45,7 +45,7 @@ def dedup_sweep(marks):
         except peewee.IntegrityError:
             lk = Link.get(phash=hid)
             if lk.count <= len(rows):
-                lk.count += (len(rows)-lk.count)
+                lk.count += (len(rows) - lk.count)
             else:
                 # We should not get here
                 # FIXME: This else is an error means
@@ -82,4 +82,3 @@ def dedup_dealloc(items):
         print("Delete ", i)
         q = Hive.delete().where(Hive.rowid == i)
         q.execute()
-

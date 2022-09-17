@@ -4,8 +4,8 @@ from mastertext.models import *
 from mastertext.utils import *
 
 fsck_queries = {
-	'link_table_rebuild':"select hashid from hive where hashid not in (select phash from link);"
-	}
+    'link_table_rebuild': "select hashid from hive where hashid not in (select phash from link);"
+}
 """
 This function fixes a databse corruption issue
 that happens in a couple of different ways
@@ -30,50 +30,53 @@ and in that case You do you, you do you.
 
 You can tell if this has happened if selects on object ids start returning way more rows then is sane
 """
+
+
 def reid_all_objects(bad_id):
 
-	allData = Hive.select().where(Hive.hashid == bad_id)
-	for row in allData.iterator():
-		try:
-			newid = sha1_id_object(row.data)
-		except EncodingError:
-			if fix_encoding(row.rowid):
-				newid = sha1_id_object(row.data.decode('utf-8'))
-			else:
-				print("unrecoverable encoding error on " + str(row.rowid))
-				break
-		roid = row.rowid # I have no control over this confusing variable naming see SQLite docs on rowid
-		# basiclly it's the INT PRIMARY KEY implicit by default in all sqlite tables
-		# We can't enforce any constraints on an fts5 virtual table
-		# hence the sha1 hash ids which are reasonably unique, but as those are unreliable at this point
-		# we have to grab the data one row at a time get the hidden rowid feild and use that in our update statement
-		print( "Keying " +  str(row.rowid)  + " with " + str(newid) )
-		u = Hive.update(hashid=newid).where(Hive.rowid == roid)
-		if u.execute() != 1:
-			raise MasterTextError("Write my TestCase and replace this error when your done kthanks!")
+    allData = Hive.select().where(Hive.hashid == bad_id)
+    for row in allData.iterator():
+        try:
+            newid = sha1_id_object(row.data)
+        except EncodingError:
+            if fix_encoding(row.rowid):
+                newid = sha1_id_object(row.data.decode('utf-8'))
+            else:
+                print("unrecoverable encoding error on " + str(row.rowid))
+                break
+        # I have no control over this confusing variable naming see SQLite docs on rowid
+        roid = row.rowid
+        # basiclly it's the INT PRIMARY KEY implicit by default in all sqlite tables
+        # We can't enforce any constraints on an fts5 virtual table
+        # hence the sha1 hash ids which are reasonably unique, but as those are unreliable at this point
+        # we have to grab the data one row at a time get the hidden rowid feild and use that in our update statement
+        print("Keying " + str(row.rowid) + " with " + str(newid))
+        u = Hive.update(hashid=newid).where(Hive.rowid == roid)
+        if u.execute() != 1:
+            raise MasterTextError(
+                "Write my TestCase and replace this error when your done kthanks!")
+
 
 def fix_encoding(bad_rowid):
-	
-	qs = Hive.select().where(Hive.rowid == bad_rowid)
-	fix = qs[0].data.decode('utf-8')
-	u = Hive.update(data=fix).where(Hive.rowid == bad_rowid)
-	return u.execute()
+
+    qs = Hive.select().where(Hive.rowid == bad_rowid)
+    fix = qs[0].data.decode('utf-8')
+    u = Hive.update(data=fix).where(Hive.rowid == bad_rowid)
+    return u.execute()
 
 # UGLY HACK WARNING Woohp Woohp
-# Didn't know what i was doing the first 
+# Didn't know what i was doing the first
 # so I had to redesign the db without losing
-# any data in it, this should be the last such 
+# any data in it, this should be the last such
 # function before we get started on the meet of the app
+
+
 def rebuild_link_table():
-	"""
-	Rebuild a damaged on missing link table
-	dedup should run first if needed
-	"""
-	q = database.execute_sql(fsck_queries['link_table_rebuild'])
-	for r in q.fetchall():
-		print("linking " + str(r[0]) )
-		Link.create(phash=str(r[0]), count=1)
-
-
-
-
+    """
+    Rebuild a damaged on missing link table
+    dedup should run first if needed
+    """
+    q = database.execute_sql(fsck_queries['link_table_rebuild'])
+    for r in q.fetchall():
+        print("linking " + str(r[0]))
+        Link.create(phash=str(r[0]), count=1)

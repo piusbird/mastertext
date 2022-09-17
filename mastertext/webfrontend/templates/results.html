@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 <h1> Results for {{metadata.query}} </h1>
+<p> Total Entries: {{metadata.count}} </p>
+
 {% for item in srs %}
 <p><strong>{{item.date}}</strong> | <a href="/d/{{item.id}}"> {{ item.id }}</a></p>
 <div class="cm"> {{item.sample|markdown}} </div>
