@@ -5,7 +5,7 @@ import os
 load_dotenv()
 
 class Config:
-    dbpath = os.getenv("MTDB_PATH") or './master.db'
+    dbpath = os.getenv("MTDB_PATH") or os.path.abspath('./master.db')
     SECRET_KEY = os.getenv("SECRET_KEY") or 'changethisplease'
     DATABASE = {"name":dbpath, 'engine':'playhouse.sqlite_ext.SqliteExtDatabase'}
     SECURITY_PASSWORD_SALT = os.getenv('PASSWORD_SALT') or SECRET_KEY
