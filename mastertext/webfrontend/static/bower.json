@@ -1,0 +1,21 @@
+{
+  "name": "masterweb-static",
+  "homepage": "https://github.com/marnold/mastertext",
+  "authors": [
+    "Matt Arnold <matt@thegnuguru.org>"
+  ],
+  "description": "Static Files for MasterText",
+  "main": "",
+  "license": "AGPLv3",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "simplemde": "^1.11.2"
+  }
+}
