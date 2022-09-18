@@ -95,3 +95,10 @@ class Annotation(BaseModel):
     notehash = CharField(max_length=40, unique=False)
     phash = CharField(max_length=40, unique=False)
     npos = IntegerField(null=False)
+
+
+class User(BaseModel):
+    username = CharField(unique=True)
+    password = CharField()
+    email = CharField()
+    join_date = DateTimeField()
