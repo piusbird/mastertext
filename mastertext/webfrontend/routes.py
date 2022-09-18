@@ -36,10 +36,6 @@ def search_result():
     if not form.validate() and term is None:
         return render_template('search-main.html', form=form, title="Search")
     
-    term = request.args.get('term', None)
-    if term is None: # Shouldn't get here after 
-        return "No Search Term", 400
-    
     page = int(request.args.get('page', 1))
     meta = {"query": term}
     meta['page'] = page
