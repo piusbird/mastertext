@@ -1,10 +1,14 @@
 from peewee import Model, BareField
-from peewee import CharField, IntegerField
+from peewee import CharField, IntegerField, DateTimeField, TextField
+from peewee import BooleanField
 from peewee import ForeignKeyField, CompositeKey
 from playhouse.sqlite_ext import SqliteExtDatabase
 from playhouse.sqlite_ext import RowIDField, SearchField
 from playhouse.sqlite_ext import BlobField, FTS5Model
 from mastertext.settings import dbpath
+from flask_security import Security, PeeweeUserDatastore, \
+    UserMixin, RoleMixin
+
 database = SqliteExtDatabase(dbpath)  # set database at run time
 
 
@@ -96,9 +100,21 @@ class Annotation(BaseModel):
     phash = CharField(max_length=40, unique=False)
     npos = IntegerField(null=False)
 
+class Role(BaseModel, RoleMixin):
+    name = CharField(unique=True)
+    description = TextField(null=True)
 
-class User(BaseModel):
-    username = CharField(unique=True)
-    password = CharField()
-    email = CharField()
-    join_date = DateTimeField()
+class User(BaseModel, UserMixin):
+    email = TextField()
+    password = TextField()
+    active = BooleanField(default=True)
+    confirmed_at = DateTimeField(null=True)
+
+class UserRoles(BaseModel):
+    # Because peewee does not come with built-in many-to-many
+    # relationships, we need this intermediary class to link
+    # user to roles.
+    user = ForeignKeyField(User, related_name='roles')
+    role = ForeignKeyField(Role, related_name='users')
+    name = property(lambda self: self.role.name)
+    description = property(lambda self: self.role.description)

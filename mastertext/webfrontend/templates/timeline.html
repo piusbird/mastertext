@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1> The Global Timeline </h1>
+<h2> Here is the full timeline </h2>
+{% for item in newstuff %}
+<p><strong>{{item.date}}</strong> | <a href="/d/{{item.id}}"> {{ item.id }}</a></p>
+<div class="cm"> {{item.sample|markdown}} </div>
+<hr>
+{% endfor %}
+
+{% endblock %}
