@@ -2,12 +2,24 @@
 {% block content %}
 <h1> Results for {{metadata.query}} </h1>
 <p> Total Entries: {{metadata.count}} </p>
+<p>  <a href="/s?term={{metadata.query}}"> <strong>Permalink to search:</strong> </a></p>
+
 
 {% for item in srs %}
 <p><strong>{{item.date}}</strong> | <a href="/d/{{item.id}}"> {{ item.id }}</a></p>
 <div class="cm"> {{item.sample|markdown}} </div>
 <hr>
 {% endfor %}
-
+<hr>
+<p> 
+    {% if metadata.numpages > 1 %}
+    <h4> You are on Page {{metadata.page}} of {{metadata.numpages}} </h4><br/> 
+    {% for p in range(1, metadata.numpages) %}
+    <strong><a href="/s?term={{metadata.query}}&page={{p}}"> {{p}}</a></strong> --
+    {% endfor %}
+    {% else %}
+    <h4> That's all folks</h4>
+    {% endif %}
+</p>
 {% endblock %}
 

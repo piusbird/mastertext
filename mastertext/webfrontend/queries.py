@@ -10,10 +10,13 @@ def get_latest(numents):
             {'id': e.hashid, 'date': e.inject_date, 'sample': e.data[0:399]})
     return results
 
+
+def total_pages(fts5term, items=PERPAGE):
+    count_total = Hive.search(fts5term).count()
+    return count_total // items
+
 # We have a different search function because the webapp needs the data in a different
 # way
-
-
 def fulltext_search(fts5term, page=1, items=PERPAGE):
     count_total = Hive.search(fts5term).count()
     sq = Hive.search(fts5term).order_by(

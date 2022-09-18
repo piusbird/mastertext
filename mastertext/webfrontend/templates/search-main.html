@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Seek and Ye Shall find</h1>
+    <form action="" method="get" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.term.label }}<br>
+            {{ form.term(size=50) }}
+        </p>
+        <p>
+            The full set of <a href="https://www.sqlite.org/fts5.html"> FTS5</a>
+             search operators is supported, Remember NOT implies AND <br>
+             <strong> TODO No Syntax validation, will crash if on syntax error</strong>
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
