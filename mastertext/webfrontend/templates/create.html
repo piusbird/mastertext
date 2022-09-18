@@ -2,12 +2,9 @@
 {% block content %}
 
 <h1>Blob Create</h1>
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', 
-    filename='bower_components/simplemde/dist/simplemde.min.css') }}">
-<script src="{{ url_for('static',  filename='bower_components/simplemde/dist/simplemde.min.js') }}">
-</script>
 
-    <form action="" method="post">
+
+    <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
             {{ form.body.label }}<br>
@@ -15,7 +12,6 @@
         </p>
         <p>
             Markdown is fully supported<br>
-             <strong> TODO No Syntax validation, will crash if on syntax error</strong>
              {% for error in form.body.errors %}
             <span style="color: peru;">[{{ error }}]</span>
             {% endfor %}
@@ -23,6 +19,6 @@
         <p>{{ form.submit() }}</p>
     </form>
     <script>
-        var simplemde = new SimpleMDE({ element: document.getElementById("body") });
+        var simplemde = new SimpleMDE();
         </script>
 {% endblock %}

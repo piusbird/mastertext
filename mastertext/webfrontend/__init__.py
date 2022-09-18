@@ -13,7 +13,7 @@ app.config.from_object(Config)
 db = FlaskDB(app)
 
 from . import routes
-user_datastore = PeeweeUserDatastore(db, User, Role, UserRoles)
+user_datastore = PeeweeUserDatastore(database, User, Role, UserRoles)
 app.security = Security(app, user_datastore)
 
 
