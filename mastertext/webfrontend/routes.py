@@ -7,9 +7,10 @@ from flask_security import Security, PeeweeUserDatastore, \
     UserMixin, RoleMixin, auth_required
 
 from flask_security import LoginForm, url_for_security
+from mastertext.singleton import StoreConnect
 
 
-ts = TextObjectStore()
+ts = StoreConnect().get_objstore()
 
 
 @app.route('/')
@@ -38,7 +39,7 @@ def view_document(hashid):
 def search_result():
     form = forms.SearchForm(request.args)
     term = request.args.get('term', None)
-    if not form.validate() and term is None:
+    if not form.validate_on_submit() and term is None:
         return render_template('search-main.html', form=form, title="Search")
     
     page = int(request.args.get('page', 1))
@@ -69,3 +70,27 @@ def home():
 def timeline():
     timeline = queries.get_latest(250)
     return render_template('timeline.html', title='Global Timeline', newstuff=timeline)
+
+@app.route('/create', methods=['GET', 'POST'])  
+def create_blob():
+    form = forms.CreateForm()
+    if form.validate_on_submit():
+        blobinfo = ts.create_object(form.body.data)
+        if blobinfo['count'] == 1:
+            flash(blobinfo['hash'] + " Created Successfully" )
+            nwloc = blobinfo['hash']
+            return redirect(f'/d/{nwloc}')
+        elif blobinfo['count'] > 1:
+            nwloc = blobinfo['hash']
+            return redirect(f'/d/{nwloc}')
+        else:
+            flash("Coder error Replace Coder")
+            return redirect('/index')
+    else:
+        return render_template('create.html', title="Create A Blob", form=form)
+            
+
+        
+
+
+

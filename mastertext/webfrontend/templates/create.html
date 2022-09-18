@@ -1,18 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Seek and Ye Shall find</h1>
-    <form action="" method="get">
+<h1>Blob Create</h1>
+    <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
-            {{ form.term.label }}<br>
-            {{ form.term(size=50) }}
+            {{ form.body.label }}<br>
+            {{ form.body(cols="80", rows="24") }}
         </p>
         <p>
-            The full set of <a href="https://www.sqlite.org/fts5.html"> FTS5</a>
-             search operators is supported, Remember NOT implies AND <br>
+            Markdown is fully supported<br>
              <strong> TODO No Syntax validation, will crash if on syntax error</strong>
-             {% for error in login_user_form.password.errors %}
+             {% for error in form.body.errors %}
             <span style="color: peru;">[{{ error }}]</span>
             {% endfor %}
         </p>
