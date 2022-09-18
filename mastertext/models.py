@@ -109,6 +109,8 @@ class User(BaseModel, UserMixin):
     password = TextField()
     active = BooleanField(default=True)
     confirmed_at = DateTimeField(null=True)
+    fs_uniquifier = CharField(max_length=64, null=False)
+
 
 class UserRoles(BaseModel):
     # Because peewee does not come with built-in many-to-many

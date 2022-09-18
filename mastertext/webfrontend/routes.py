@@ -4,7 +4,10 @@ from mastertext.objectstore import TextObjectStore, valid_hash, ObjectNotFoundEr
 from mastertext.webfrontend import queries
 from mastertext.webfrontend import forms
 from flask_security import Security, PeeweeUserDatastore, \
-    UserMixin, RoleMixin, login_required
+    UserMixin, RoleMixin, auth_required
+
+from flask_security import LoginForm, url_for_security
+
 
 ts = TextObjectStore()
 
@@ -50,18 +53,19 @@ def search_result():
     return render_template('results.html',
                            title="Search Results for: " + meta["query"], srs=q, metadata=meta)
 
-#@app.route('/login', methods=['GET', 'POST'])
-#def login():
-#    form = forms.LoginForm()
-#    if form.validate_on_submit():
-#        flash('Login requested for user {}, remember_me={}'.format(
-#            form.username.data, form.remember_me.data))
-#        return redirect('/index')
-#    return render_template('login.html', title='Sign In', form=form)
+@app.context_processor
+def login_context():
+    return {
+        'url_for_security': url_for_security,
+        'login_user_form': LoginForm(),
+    }
 
+@app.route('/tests/home')
+@auth_required()
+def home():
+    return render_template_string("Hello {{ current_user.email }}")
 
 @app.route('/timeline')
-@login_required
 def timeline():
     timeline = queries.get_latest(250)
     return render_template('timeline.html', title='Global Timeline', newstuff=timeline)
