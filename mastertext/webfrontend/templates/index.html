@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h1> Hi {{ current_user.email }} </h1>
+<h1> Hi {{ current_user.username }} </h1>
 <h2> Here are the latest entries </h2>
 {% for item in newstuff %}
 <p><strong>{{item.date}}</strong> | <a href="/d/{{item.id}}"> {{ item.id }}</a></p>

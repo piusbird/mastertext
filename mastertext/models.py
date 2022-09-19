@@ -6,8 +6,9 @@ from playhouse.sqlite_ext import SqliteExtDatabase
 from playhouse.sqlite_ext import RowIDField, SearchField
 from playhouse.sqlite_ext import BlobField, FTS5Model
 from mastertext.settings import dbpath
-from flask_security import Security, PeeweeUserDatastore, \
-    UserMixin, RoleMixin
+from flask_login import UserMixin as LUserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 database = SqliteExtDatabase(dbpath)  # set database at run time
 
@@ -100,23 +101,15 @@ class Annotation(BaseModel):
     phash = CharField(max_length=40, unique=False)
     npos = IntegerField(null=False)
 
-class Role(BaseModel, RoleMixin):
-    name = CharField(unique=True)
-    description = TextField(null=True)
 
-class User(BaseModel, UserMixin):
-    email = TextField()
-    password = TextField()
-    active = BooleanField(default=True)
-    confirmed_at = DateTimeField(null=True)
-    fs_uniquifier = CharField(max_length=64, null=False)
+class NewUser(LUserMixin, BaseModel):
+    id = IntegerField(primary_key=True)
+    username = CharField(max_length=64, index=True, unique=True)
+    email = TextField(unique=True, index=True)
+    password_hash = CharField(max_length=128)
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-class UserRoles(BaseModel):
-    # Because peewee does not come with built-in many-to-many
-    # relationships, we need this intermediary class to link
-    # user to roles.
-    user = ForeignKeyField(User, related_name='roles')
-    role = ForeignKeyField(Role, related_name='users')
-    name = property(lambda self: self.role.name)
-    description = property(lambda self: self.role.description)
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)

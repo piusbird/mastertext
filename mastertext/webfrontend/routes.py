@@ -1,13 +1,15 @@
 from mastertext.webfrontend import app
 from flask import render_template, request, flash, redirect
+from flask import render_template_string
 from mastertext.objectstore import TextObjectStore, valid_hash, ObjectNotFoundError
+from flask import url_for
 from mastertext.webfrontend import queries
 from mastertext.webfrontend import forms
-from flask_security import Security, PeeweeUserDatastore, \
-    UserMixin, RoleMixin, auth_required
-
-from flask_security import LoginForm, url_for_security
 from mastertext.singleton import StoreConnect
+from mastertext.models import *
+from werkzeug.urls import url_parse
+from flask_login import login_required
+from flask_login import logout_user, login_user
 
 
 ts = StoreConnect().get_objstore()
@@ -15,13 +17,14 @@ ts = StoreConnect().get_objstore()
 
 @app.route('/')
 @app.route('/index')
+@login_required
 def index():
-    user = {'username': 'Piusbird'}
     latest = queries.get_latest(10)
-    return render_template('index.html', title='Home', user=user, newstuff=latest)
+    return render_template('index.html', title='Home', newstuff=latest)
 
 
 @app.route('/d/<string:hashid>')
+@login_required
 def view_document(hashid):
     result = ''
     if not valid_hash(hashid):
@@ -34,14 +37,16 @@ def view_document(hashid):
     except ObjectNotFoundError as e:
         return str(e), 404
 
+
 @app.route('/tests/search')
 @app.route('/s')
+@login_required
 def search_result():
     form = forms.SearchForm(request.args)
     term = request.args.get('term', None)
     if not form.validate_on_submit() and term is None:
         return render_template('search-main.html', form=form, title="Search")
-    
+
     page = int(request.args.get('page', 1))
     meta = {"query": term}
     meta['page'] = page
@@ -54,30 +59,28 @@ def search_result():
     return render_template('results.html',
                            title="Search Results for: " + meta["query"], srs=q, metadata=meta)
 
-@app.context_processor
-def login_context():
-    return {
-        'url_for_security': url_for_security,
-        'login_user_form': LoginForm(),
-    }
 
 @app.route('/tests/home')
-@auth_required()
+@login_required
 def home():
-    return render_template_string("Hello {{ current_user.email }}")
+    return render_template_string("Hello {{ current_user.username }}")
 
+
+@login_required
 @app.route('/timeline')
 def timeline():
     timeline = queries.get_latest(250)
     return render_template('timeline.html', title='Global Timeline', newstuff=timeline)
 
-@app.route('/create', methods=['GET', 'POST'])  
+
+@app.route('/create', methods=['GET', 'POST'])
+@login_required
 def create_blob():
     form = forms.CreateForm()
     if form.validate_on_submit():
         blobinfo = ts.create_object(form.body.data)
         if blobinfo['count'] == 1:
-            flash(blobinfo['hash'] + " Created Successfully" )
+            flash(blobinfo['hash'] + " Created Successfully")
             nwloc = blobinfo['hash']
             return redirect(f'/d/{nwloc}')
         elif blobinfo['count'] > 1:
@@ -88,9 +91,27 @@ def create_blob():
             return redirect('/index')
     else:
         return render_template('create.html', title="Create A Blob", form=form)
-            
-
-        
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = forms.LoginForm()
+    if form.validate_on_submit():
+        user = NewUser.get(NewUser.username == form.username.data)
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('index')
+        return redirect(next_page)
+    else:
+        return render_template('login.html', form=form)
 
+
+@app.route('/logout')
+def logout():
+    flash("Goodbye!")
+    logout_user()
+    return redirect(url_for('index'))

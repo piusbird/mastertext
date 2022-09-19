@@ -19,14 +19,18 @@
   
 <div class="navbar"> 
   <a href="/index"> ⭐ Home </a> - 
-  <a href="/login"> 🗝️ Login </a>  
+  {% if not current_user.username %}
+  <a href="/login"> 🗝️ Login </a>
+  {% else %}
+  <a href="/logout"> 🗝️ Logout </a>
+  {% endif %}
    - <a href="/s"> 🔎 Search </a> 
   - <a href="/timeline"> ⏰ Timeline</a>
   - <a href="/create"> 🦸Create </a>
 </div>
 <hr>
 <hr>
-        {% with messages = get_flashed_messages() %}
+<span style="color: peru;"> {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>
             {% for message in messages %}
@@ -35,6 +39,7 @@
         </ul>
         {% endif %}
         {% endwith %}
+        </span>
 <div class="app-content"> {% block content %}{% endblock %} </div>
 </body>
 </html>
