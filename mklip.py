@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 # Mastertext Cliboard manager
-from gi.repository import Gtk, Gdk
-import dbus
-import dbus.service
-from dbus.mainloop.glib import DBusGMainLoop
 from mastertext.utils import sha1_id_object
 from mastertext.objectstore import *
 import re
@@ -13,6 +9,10 @@ import sys
 import os
 import gi
 gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk
+import dbus
+import dbus.service
+from dbus.mainloop.glib import DBusGMainLoop
 
 END_OF_STACK = 'deadbeef' * 5
 

@@ -14,8 +14,8 @@
 <p> 
     {% if metadata.numpages > 1 %}
     <h4> You are on Page {{metadata.page}} of {{metadata.numpages}} </h4><br/> 
-    {% for p in range(1, metadata.numpages) %}
-    <strong><a href="/s?term={{metadata.query}}&page={{p}}"> {{p}}</a></strong> --
+    {% for p in range(metadata.numpages) %}
+    <strong><a href="/s?term={{metadata.query}}&page={{p + 1}}"> {{p + 1}}</a></strong> --
     {% endfor %}
     {% else %}
     <h4> That's all folks</h4>
