@@ -32,11 +32,13 @@
 <hr>
 <span style="color: peru;"> {% with messages = get_flashed_messages() %}
         {% if messages %}
+        <marquee width="60%" direction="up" height="100px">
         <ul>
             {% for message in messages %}
             <li>{{ message }}</li>
             {% endfor %}
         </ul>
+        </marquee>
         {% endif %}
         {% endwith %}
         </span>

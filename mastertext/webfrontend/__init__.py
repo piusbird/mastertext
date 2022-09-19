@@ -1,5 +1,3 @@
-
-from . import routes
 from mastertext.settings import Config
 from flask_misaka import Misaka
 from flask import Flask
@@ -28,3 +26,5 @@ def load_user(id):
 #        Model.create_table(fail_silently=True)
 #
 #    user_datastore.create_user(email='matt@piusbird.space', password='password')
+
+from . import routes
