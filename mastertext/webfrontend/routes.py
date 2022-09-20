@@ -6,6 +6,8 @@ from flask import url_for
 from mastertext.webfrontend import queries
 from mastertext.webfrontend import forms
 from mastertext.singleton import StoreConnect
+from mastertext.utils import MasterTextError
+from peewee import OperationalError
 from mastertext.models import *
 from werkzeug.urls import url_parse
 from flask_login import login_required
@@ -50,8 +52,13 @@ def search_result():
     page = int(request.args.get('page', 1))
     meta = {"query": term}
     meta['page'] = page
-    q = queries.fulltext_search(term, page)
-    meta['numpages'] = queries.total_pages(term)
+    try:
+        q = queries.fulltext_search(term, page)
+        meta['numpages'] = queries.total_pages(term)
+    except Exception as e:
+        flash(str(e))
+        flash("Try Again!")
+        return render_template('search-main.html', title='Search', form=form)
     try:
         meta['count'] = q[0]["total"]
     except IndexError as e:

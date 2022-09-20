@@ -1,4 +1,7 @@
 from mastertext.models import *
+from peewee import OperationalError
+from mastertext.utils import MasterTextError
+
 PERPAGE = 15
 
 
@@ -12,7 +15,10 @@ def get_latest(numents):
 
 
 def total_pages(fts5term, items=PERPAGE):
-    count_total = Hive.search(fts5term).count()
+    try:
+        count_total = Hive.search(fts5term).count()
+    except OperationalError as e:
+        raise MasterTextError(str(e))
     return count_total // items
 
 # We have a different search function because the webapp needs the data in a different
@@ -21,8 +27,11 @@ def total_pages(fts5term, items=PERPAGE):
 
 def fulltext_search(fts5term, page=1, items=PERPAGE):
     count_total = Hive.search(fts5term).count()
-    sq = Hive.search(fts5term).order_by(
-        Hive.inject_date.desc()).paginate(page, items)
+    try:
+        sq = Hive.search(fts5term).order_by(
+            Hive.inject_date.desc()).paginate(page, items)
+    except OperationalError as e:
+        raise MasterTextError(str(e))
     result = []
     for e in sq:
         result.append({"total": count_total, "id": e.hashid,
