@@ -84,6 +84,8 @@ def timeline():
 @login_required
 def create_blob():
     form = forms.CreateForm()
+    clone = request.args.get('clone', None)
+    title = "Create a Blob"
     if form.validate_on_submit():
         blobinfo = ts.create_object(form.body.data)
         if blobinfo['count'] == 1:
@@ -97,7 +99,10 @@ def create_blob():
             flash("Coder error Replace Coder")
             return redirect('/index')
     else:
-        return render_template('create.html', title="Create A Blob", form=form)
+        if clone is not None:
+            form.body.data = ts.retrieve_object(clone)
+            title = "Clone " + clone
+        return render_template('create.html', title=title, form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

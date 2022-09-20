@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+<hr>
+<a href="{{url_for('create_blob', clone=docdata.hash)}}"> 🪴 
+        Clone 
+</a>
 <h1> Document {{ docdata.hash }} </h1>
 
 <div class="cm">
