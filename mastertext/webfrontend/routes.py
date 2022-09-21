@@ -2,7 +2,7 @@ from mastertext.webfrontend import app
 from flask import render_template, request, flash, redirect
 from flask import render_template_string
 from mastertext.objectstore import TextObjectStore, valid_hash, ObjectNotFoundError
-from flask import url_for
+from flask import url_for, Response
 from mastertext.webfrontend import queries
 from mastertext.webfrontend import forms
 from mastertext.singleton import StoreConnect
@@ -21,8 +21,9 @@ ts = StoreConnect().get_objstore()
 @app.route('/index')
 @login_required
 def index():
+    quicksearch = forms.SearchForm()
     latest = queries.get_latest(10)
-    return render_template('index.html', title='Home', newstuff=latest)
+    return render_template('index.html', title='Home', newstuff=latest, qs=quicksearch)
 
 
 @app.route('/d/<string:hashid>')
@@ -36,6 +37,22 @@ def view_document(hashid):
         result = ts.retrieve_object(hashid)
         data = {'hash': hashid, 'doc': result}
         return render_template('document.html', title="document " + hashid, docdata=data)
+    except ObjectNotFoundError as e:
+        return str(e), 404
+
+
+
+@app.route('/d/<string:hashid>/orig')
+@login_required
+def orig_document(hashid):
+    result = ''
+    if not valid_hash(hashid):
+        return "Not a valid hash", 401
+
+    try:
+        result = ts.retrieve_object(hashid)
+        data = Response(result, mimetype='text/plain')
+        return data
     except ObjectNotFoundError as e:
         return str(e), 404
 

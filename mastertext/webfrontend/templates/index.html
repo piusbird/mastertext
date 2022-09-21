@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<h1> Hi {{ current_user.username }} </h1>
+<div class="fancy-pants"> <h1> Hi {{ current_user.username }} </h1> </div>
+<div class="pink-box"> <form action="/s" method="get">
+    {{ qs.hidden_tag() }}
+    <p>
+      <strong> Quick Search:</strong>   {{ qs.term(size=50) }} <br/>
+      {{ qs.submit() }}
+    </p></div>
+
 <h2> Here are the latest entries </h2>
 {% for item in newstuff %}
 <p><strong>{{item.date}}</strong> | <a href="/d/{{item.id}}"> {{ item.id }}</a></p>

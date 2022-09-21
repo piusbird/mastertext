@@ -1,4 +1,4 @@
-.main-content {
+.fancy-pants {
       font-family: cursive, sans-serif;
       font-size: 20px;
       font-weight: bolder;
@@ -10,7 +10,8 @@
       font-size: 1.3rem;
       font-weight: bolder;
       font-style: italic;
-      align: left;
+      position: absolute;
+	  	left: 0;
 }
 
 body {
@@ -40,7 +41,13 @@ a {
 
 
 .cm {
-        border: 2px solid #FCE93C;
+    border: 2px solid #FCE93C;
 	border-radius: 25px;
+	padding: auto
 }
 
+.pink-box {
+	border: 2px solid palevioletred;
+	padding: auto;
+
+}

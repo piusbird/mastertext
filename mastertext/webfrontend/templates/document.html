@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<hr>
-<a href="{{url_for('create_blob', clone=docdata.hash)}}"> 🪴 
+<a href="{{url_for('create_blob', clone=docdata.hash)}}"> 🪴
         Clone 
-</a>
+</a> -
+<a href="{{url_for('orig_document', hashid=docdata.hash) }}">📖 View Original</a>
+<hr>
 <h1> Document {{ docdata.hash }} </h1>
 
+<article>
 <div class="cm">
         {{docdata.doc|markdown }}
     
 </div>
-
+</article>
 {% endblock %}

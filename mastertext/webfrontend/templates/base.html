@@ -17,16 +17,16 @@
 
 <body>
   
-<div class="navbar"> 
-  <a href="/index"> ⭐ Home </a> - 
-  {% if not current_user.username %}
-  <a href="/login"> 🗝️ Login </a>
-  {% else %}
-  <a href="/logout"> 🗝️ Logout </a>
-  {% endif %}
-   - <a href="/s"> 🔎 Search </a> 
-  - <a href="/timeline"> ⏰ Timeline</a>
-  - <a href="/create"> 🦸Create </a>
+<div class="sidebar"> 
+  <a href="/index"> ⭐ Home </a> <br/> 
+  <a href="/s"> 🔎 Search </a> <br/> 
+   <a href="/create"> 🦸Create </a><br/>
+   <a href="/timeline"> ⏰ Timeline</a> <br/>
+   {% if not current_user.username %}
+   <a href="/login"> 🗝️ Login </a> <br/>
+   {% else %}
+   <a href="/logout"> 🗝️ Logout </a><br/>
+   {% endif %}
 </div>
 <hr>
 <hr>
