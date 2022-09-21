@@ -2,8 +2,11 @@
 import sys
 from mastertext.objectstore import TextObjectStore
 from mastertext.etl import inject_file, crawl_dir
+from mastertext.models import *
 import click
+from getpass import getpass
 from os.path import isfile, isdir
+from werkzeug.security import generate_password_hash
 ts = TextObjectStore()
 
 
@@ -56,6 +59,28 @@ def etl(ent, destroy):
         crawl_dir(ent, destroy)
     else:
         click.echo("Not a file i can ETL")
+
+
+@cli.command()
+@click.argument('username')
+def migrate_add_users(username):
+    if not click.confirm("Warning this will destroy and reintalize the users table"):
+        return 1
+    usr = None
+    passwd = getpass(f"Enter password for {username}: ")
+    confirm = getpass("Confirm: ")
+    if passwd != confirm:
+        click.echo("password missmatch")
+        return 1
+    hashed = generate_password_hash(passwd)
+    with database:    
+        NewUser.drop_table(safe=True)
+        NewUser.create_table(safe=True)
+        usr = NewUser.create(username=username, email='test@example.com', password_hash=hashed)
+    
+    click.echo(usr)
+    return 0
+
 
 
 if __name__ == '__main__':
