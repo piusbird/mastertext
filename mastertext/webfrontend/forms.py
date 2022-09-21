@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, URL
 from wtforms.widgets import TextArea
 
 
@@ -20,3 +20,7 @@ class CreateForm(FlaskForm):
     body = StringField(u'Create A Blob', widget=TextArea(),
                        validators=[DataRequired()])
     submit = SubmitField("New")
+
+class ImportForm(FlaskForm):
+    import_url = StringField(u"Webpage to Import", validators=[DataRequired(), URL()])
+    submit = SubmitField("Go!")

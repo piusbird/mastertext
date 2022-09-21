@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Ask and it will be given</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.import_url.label }}<br>
+            {{ form.import_url(size=50) }}
+        </p>
+        <p>
+            Enter a URL to import  <br>
+            <strong> TODO: This may fail silently for TLS reasons or 
+                because CloudFlare is being a poopyhead  :/ </strong>
+    
+             {% for error in form.import_url.errors %}
+            <span style="color: peru;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

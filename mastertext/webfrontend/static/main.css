@@ -37,13 +37,15 @@ h1 {
 a {
 	color: #FCE94F;
 	font-weight: 600;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 
 .cm {
     border: 2px solid #FCE93C;
 	border-radius: 25px;
-	padding: auto
+	padding: auto;
 }
 
 .pink-box {

@@ -6,6 +6,7 @@ from mastertext.models import *
 import click
 from getpass import getpass
 from os.path import isfile, isdir
+from mastertext.importer import fetch_and_parse
 from werkzeug.security import generate_password_hash
 ts = TextObjectStore()
 
@@ -81,7 +82,12 @@ def migrate_add_users(username):
     click.echo(usr)
     return 0
 
-
+@cli.command
+@click.argument('url')
+def import_url(url):
+    text = fetch_and_parse(url)
+    created_object = ts.create_object(text)
+    print(created_object)
 
 if __name__ == '__main__':
     cli()

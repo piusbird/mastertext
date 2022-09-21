@@ -7,12 +7,13 @@ from mastertext.webfrontend import queries
 from mastertext.webfrontend import forms
 from mastertext.singleton import StoreConnect
 from mastertext.utils import MasterTextError
+from mastertext.importer import import_task
 from peewee import OperationalError
 from mastertext.models import *
 from werkzeug.urls import url_parse
 from flask_login import login_required
 from flask_login import logout_user, login_user
-
+import gevent
 
 ts = StoreConnect().get_objstore()
 
@@ -120,6 +121,19 @@ def create_blob():
             form.body.data = ts.retrieve_object(clone)
             title = "Clone " + clone
         return render_template('create.html', title=title, form=form)
+
+
+@app.route('/import', methods=['GET', 'POST'])
+@login_required
+def data_import():
+    form = forms.ImportForm()
+    if form.validate_on_submit():
+        target = form.import_url.data
+        gevent.spawn(import_task, target)
+        flash(f'{target} Importing')
+        return redirect(url_for('data_import'))
+    else:
+        return render_template('data-import.html', form=form, title="Data Import")
 
 
 @app.route('/login', methods=['GET', 'POST'])
