@@ -19,8 +19,17 @@ source <whatever>/bin/activate
 sqlite3 master.db < schema.sql
 <edit your .env file and change the path's to your needs> 
 ./mt.py etl <directory-full-of-text-files>
+./mt.py migrate-add-users <your-desired-username>
 ```
 Sorry no installer yet, after etl has run you can explore via web.py or 
-the command line.
+the command line. The web interface is more full featured at the moment
+
+mklip.py is a custom dbus service to integrate this with my other project
+vsss. Basically it's a read only clipboard manager that dumps the
+content of clipboard into a mastertext object everytime the getClipboardContents 
+method is called, before returning the content to the user.
+If you can find a use for it outside of my custom text to speech system
+do let me know. :)
 
 
+Please See privacy.md for important privacy information
