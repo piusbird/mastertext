@@ -31,8 +31,3 @@ def fetch_and_parse(url, user_agent=DEFAULT_USER_AGENT):
 
     return output
 
-def import_task(url):
-    gevent.idle()
-    ts = StoreConnect().get_objstore()
-    text = fetch_and_parse(url)
-    ts.create_object(text)
