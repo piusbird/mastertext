@@ -7,16 +7,18 @@ from mastertext.webfrontend import queries
 from mastertext.webfrontend import forms
 from mastertext.singleton import StoreConnect
 from mastertext.utils import MasterTextError
-from mastertext.importer import import_task
+from mastertext.webfrontend.tasks import import_task
+from mastertext.singleton import BorgCache
 from peewee import OperationalError
 from mastertext.models import *
 from werkzeug.urls import url_parse
 from flask_login import login_required
 from flask_login import logout_user, login_user
 import gevent
+from sys import stderr
 
 ts = StoreConnect().get_objstore()
-
+bc = app.cache
 
 @app.route('/')
 @app.route('/index')
@@ -28,16 +30,22 @@ def index():
 
 
 @app.route('/d/<string:hashid>')
-@login_required
+#@login_required
 def view_document(hashid):
     result = ''
+    print( "Content " + str(bc.cache.keys()), file=stderr)
     if not valid_hash(hashid):
         return "Not a valid hash", 401
 
+    if str(hashid) in bc.cache:
+        print("Cache hit!", file=stderr)
+        return bc.cache[hashid]
     try:
         result = ts.retrieve_object(hashid)
         data = {'hash': hashid, 'doc': result}
-        return render_template('document.html', title="document " + hashid, docdata=data)
+        resp = render_template('document.html', title="document " + hashid, docdata=data)
+        bc.cache[hashid] = resp
+        return resp
     except ObjectNotFoundError as e:
         return str(e), 404
 

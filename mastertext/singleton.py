@@ -3,6 +3,7 @@
 # the db for data integraty reasons. This is an ugly HAX. To work around some
 # file system and SQLite issues
 from mastertext.objectstore import TextObjectStore
+import threading
 
 
 class StoreConnect(object):
@@ -19,3 +20,16 @@ class StoreConnect(object):
 
     def get_objstore(self):
         return self.ObjectStoreConnect
+
+
+class BorgCache(object):
+    _instance = None
+    _lock = threading.Lock()
+    cache = {}
+
+    def __new__(cls, *args, **kwargs):
+        with cls._lock:
+
+            if not cls._instance:
+                cls._instance = super(BorgCache, cls).__new__(cls)
+        return cls._instance

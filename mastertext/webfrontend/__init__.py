@@ -5,10 +5,12 @@ from playhouse.flask_utils import FlaskDB
 from peewee import *
 from flask_login import LoginManager
 from mastertext.models import *
+from mastertext.singleton import BorgCache
 
 app = Flask(__name__)
 Misaka(app)
 app.config.from_object(Config)
+app.cache = BorgCache()
 app.db = FlaskDB(app)
 login = LoginManager(app)
 login.login_view = 'login'
