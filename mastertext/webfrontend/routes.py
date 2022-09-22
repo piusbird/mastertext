@@ -30,15 +30,13 @@ def index():
 
 
 @app.route('/d/<string:hashid>')
-#@login_required
+@login_required
 def view_document(hashid):
     result = ''
-    print( "Content " + str(bc.cache.keys()), file=stderr)
     if not valid_hash(hashid):
         return "Not a valid hash", 401
 
     if str(hashid) in bc.cache:
-        print("Cache hit!", file=stderr)
         return bc.cache[hashid]
     try:
         result = ts.retrieve_object(hashid)
