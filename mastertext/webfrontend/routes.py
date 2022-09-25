@@ -28,7 +28,7 @@ def flash_back_msgs():
     results = list(q)
     for r in results:
         flash(r.message)
-        Error.delete().where(id == r.id) # noqa
+        r.delete_instance()
 
 
 @app.route('/')
