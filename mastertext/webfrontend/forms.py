@@ -21,6 +21,8 @@ class CreateForm(FlaskForm):
                        validators=[DataRequired()])
     submit = SubmitField("New")
 
+
 class ImportForm(FlaskForm):
-    import_url = StringField(u"Webpage to Import", validators=[DataRequired(), URL()])
+    import_url = StringField(u"Webpage to Import", validators=[
+                             DataRequired(), URL()])
     submit = SubmitField("Go!")

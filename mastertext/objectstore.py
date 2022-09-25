@@ -1,14 +1,20 @@
-# MasterText Object store main class and utility functions
+"""
+MasterText Object Store class. Stores text in an FTS5 database using 
+a derivitive of the git blob storage algorithm to save space
+"""
 import re
 from datetime import datetime
-import peewee
 from collections import ChainMap
 from socket import gethostname
-from mastertext.models import *
+import peewee
+
+from mastertext.models import Hive, database, Link
 from mastertext.utils import MasterTextError, sha1_id_object
 
-# Confession time the only reason this is not written in Haskell is I needed it yesterday
-# And I'm out of practice but there will be lambdas and monads and all that sort of stuff all over
+# Confession time the only reason this is not written in Haskell is 
+# I needed it yesterday
+# And I'm out of practice but there will be lambdas and monads 
+# and all that sort of stuff all over
 # this. Deal with it!
 
 
@@ -23,8 +29,10 @@ def valid_hash(h):
 def unpack(u):
     """
     Returns the first item in a collection/contianer  or None if len(u) < 1.
-    peewee insists on returning things in collections even if there is only one thing retreived
-    as their often is with this program. This function saves you from writing obscure expresions 
+    peewee insists on returning things in collections even if there is only 
+    one thing retreived
+    as their often is with this program. 
+    This function saves you from writing obscure expresions 
     all over the place.
     """
     return None if len(u) < 1 else u[0]
@@ -43,8 +51,8 @@ class TextObjectStore:
     The TextObjectStore is the heart of MasterText
     It is a content addressable, deduplicating, full text searchable
     store of free form text documents. The main API does not include support for 
-    advanced features such as tags, notes and bookmarks. Those will be implemented 
-    by later APIs.
+    advanced features such as tags, notes and bookmarks. Those will be 
+    implemented by later APIs.
 
     The TextObjectStore assigns every document given to it for storage, a unique identifer
     based upon the content of the text, and some additional data.
@@ -82,7 +90,8 @@ class TextObjectStore:
         if len(hrows) > 1:
             raise MasterTextError("Hash indistinct")
         lh = unpack(hrows)
-        if lh is None or lh.count < 1:  # this should short circut if unpack returns None
+        if lh is None or lh.count < 1:  
+            # this should short circut if unpack returns None
             raise ObjectNotFoundError(phash + " Not found")
         textobj = unpack(Hive.select().where(Hive.hashid == lh.phash).dicts())
         if textobj is None:

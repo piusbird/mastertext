@@ -1,11 +1,16 @@
+"""
+mastertext.webfrontend is a flask web frontend to TextObjectStore
+and friends
+"""
 from mastertext.settings import Config
 from flask_misaka import Misaka
 from flask import Flask
 from playhouse.flask_utils import FlaskDB
 from peewee import *
 from flask_login import LoginManager
-from mastertext.models import *
+from mastertext.models import NewUser
 from mastertext.singleton import BorgCache
+
 
 app = Flask(__name__)
 Misaka(app)

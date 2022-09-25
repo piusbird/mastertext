@@ -74,13 +74,15 @@ def migrate_add_users(username):
         click.echo("password missmatch")
         return 1
     hashed = generate_password_hash(passwd)
-    with database:    
+    with database:
         NewUser.drop_table(safe=True)
         NewUser.create_table(safe=True)
-        usr = NewUser.create(username=username, email='test@example.com', password_hash=hashed)
-    
+        usr = NewUser.create(
+            username=username, email='test@example.com', password_hash=hashed)
+
     click.echo(usr)
     return 0
+
 
 @cli.command
 @click.argument('url')
@@ -88,7 +90,6 @@ def import_url(url):
     text = fetch_and_parse(url)
     created_object = ts.create_object(text)
     print(created_object)
-
 
 
 if __name__ == '__main__':

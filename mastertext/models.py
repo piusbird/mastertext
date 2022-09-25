@@ -102,6 +102,12 @@ class Annotation(BaseModel):
     npos = IntegerField(null=False)
 
 
+class Error(BaseModel):
+    id = IntegerField(primary_key=True)
+    date = DateTimeField()
+    message = TextField(null=False)
+
+
 class NewUser(LUserMixin, BaseModel):
     id = IntegerField(primary_key=True)
     username = CharField(max_length=64, index=True, unique=True)

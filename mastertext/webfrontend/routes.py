@@ -14,16 +14,27 @@ from mastertext.models import *
 from werkzeug.urls import url_parse
 from flask_login import login_required
 from flask_login import logout_user, login_user
+from mastertext.models import Error
 import gevent
 from sys import stderr
 
 ts = StoreConnect().get_objstore()
 bc = app.cache
 
+
+def flash_back_msgs():
+    q = Error.select()
+    results = [r for r in q]
+    for r in results:
+        flash(r.message)
+        Error.delete().where(id == r.id)
+
+
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
+    flash_back_msgs()
     quicksearch = forms.SearchForm()
     latest = queries.get_latest(10)
     return render_template('index.html', title='Home', newstuff=latest, qs=quicksearch)
@@ -32,6 +43,7 @@ def index():
 @app.route('/d/<string:hashid>')
 @login_required
 def view_document(hashid):
+    flash_back_msgs()
     result = ''
     if not valid_hash(hashid):
         return "Not a valid hash", 401
@@ -41,12 +53,12 @@ def view_document(hashid):
     try:
         result = ts.retrieve_object(hashid)
         data = {'hash': hashid, 'doc': result}
-        resp = render_template('document.html', title="document " + hashid, docdata=data)
+        resp = render_template(
+            'document.html', title="document " + hashid, docdata=data)
         bc.cache[hashid] = resp
         return resp
     except ObjectNotFoundError as e:
         return str(e), 404
-
 
 
 @app.route('/d/<string:hashid>/orig')
@@ -68,6 +80,7 @@ def orig_document(hashid):
 @app.route('/s')
 @login_required
 def search_result():
+    flash_back_msgs()
     form = forms.SearchForm(request.args)
     term = request.args.get('term', None)
     if not form.validate_on_submit() and term is None:
@@ -100,6 +113,7 @@ def home():
 @login_required
 @app.route('/timeline')
 def timeline():
+    flash_back_msgs()
     timeline = queries.get_latest(250)
     return render_template('timeline.html', title='Global Timeline', newstuff=timeline)
 
@@ -107,6 +121,7 @@ def timeline():
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
 def create_blob():
+    flash_back_msgs()
     form = forms.CreateForm()
     clone = request.args.get('clone', None)
     title = "Create a Blob"
@@ -132,6 +147,7 @@ def create_blob():
 @app.route('/import', methods=['GET', 'POST'])
 @login_required
 def data_import():
+    flash_back_msgs()
     form = forms.ImportForm()
     if form.validate_on_submit():
         target = form.import_url.data
