@@ -2,8 +2,9 @@
 # for now because we don't want the web app spawning more than one connection to
 # the db for data integraty reasons. This is an ugly HAX. To work around some
 # file system and SQLite issues
-from mastertext.objectstore import TextObjectStore
 import threading
+from mastertext.objectstore import TextObjectStore
+
 
 
 class StoreConnect(object):

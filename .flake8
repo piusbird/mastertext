@@ -1,3 +1,5 @@
 [flake8]
-ignore = E405, E303
+ignore = E405, E303, PLC0103, PLR903, PLC0116, PLR0903
+max-line-length = 119
+
 

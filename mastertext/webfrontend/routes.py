@@ -1,22 +1,22 @@
-from mastertext.webfrontend import app
+"""Standard routes module"""
+from werkzeug.urls import url_parse
+import gevent
 from flask import render_template, request, flash, redirect
 from flask import render_template_string
-from mastertext.objectstore import TextObjectStore, valid_hash, ObjectNotFoundError
 from flask import url_for, Response
+from flask_login import login_required
+from flask_login import logout_user, login_user
+from mastertext.webfrontend import app
 from mastertext.webfrontend import queries
 from mastertext.webfrontend import forms
 from mastertext.singleton import StoreConnect
-from mastertext.utils import MasterTextError
+from mastertext.objectstore import valid_hash
 from mastertext.webfrontend.tasks import import_task
-from mastertext.singleton import BorgCache
-from peewee import OperationalError
-from mastertext.models import *
-from werkzeug.urls import url_parse
-from flask_login import login_required
-from flask_login import logout_user, login_user
+from mastertext.objectstore import ObjectNotFoundError
+from mastertext.models import NewUser
 from mastertext.models import Error
-import gevent
-from sys import stderr
+
+
 
 ts = StoreConnect().get_objstore()
 bc = app.cache
@@ -99,7 +99,7 @@ def search_result():
     try:
         meta['count'] = q[0]["total"]
     except IndexError as e:
-        return "No Such Page", 404
+        return "No Such Page " + str(e), 404
     return render_template('results.html',
                            title="Search Results for: " + meta["query"], srs=q, metadata=meta)
 

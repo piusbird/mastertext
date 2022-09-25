@@ -14,7 +14,8 @@ database = SqliteExtDatabase(dbpath)  # set database at run time
 
 
 class UnknownField(object):
-    def __init__(self, *_, **__): pass
+    def __init__(self, *_, **__): 
+        pass
 
 
 class BaseModel(Model):
