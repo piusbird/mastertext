@@ -1,11 +1,11 @@
-# Settings for mastertext
-from dotenv import load_dotenv
+"""Settings for mastertext"""
 import os
-
+from dotenv import load_dotenv
 load_dotenv()
 
 
 class Config:
+    """Flask config object"""
     dbpath = os.getenv("MTDB_PATH") or os.path.abspath('./master.db')
     SECRET_KEY = os.getenv("SECRET_KEY") or 'changethisplease'
     DATABASE = {"name": dbpath,

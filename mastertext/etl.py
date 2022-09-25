@@ -1,6 +1,6 @@
 """
-MasterText Extract, Transform, Load APIs, 
-and related utility functions 
+MasterText Extract, Transform, Load APIs,
+and related utility functions
 """
 import os
 from mastertext.objectstore import TextObjectStore
@@ -10,21 +10,25 @@ ts = TextObjectStore()
 
 def inject_file(fname, **kwargs):
 
-    if os.path.isfile(fname) or (os.path.islink(fname) and os.path.isfile(os.readlink(fname))):
+    if os.path.isfile(fname) or (
+        os.path.islink(fname) and os.path.isfile(os.readlink(fname))
+    ):
         print(fname)
-        fp = open(fname, 'rb')
-        buffer = fp.read()
+        with open(fname, "rb") as fp:
+            buffer = fp.read()
 
         try:
-            txt = buffer.decode('utf-8')
+            txt = buffer.decode("utf-8")
         except UnicodeDecodeError:
-            txt = buffer.decode('iso-8859-1').encode('utf8')
-        return ts.create_object(txt, kwargs)
-        if 'destroy' in kwargs:
-            if kwargs['destroy']:
+            txt = buffer.decode("iso-8859-1").encode("utf8")
+
+        if "destroy" in kwargs:
+            if kwargs["destroy"]:
                 os.unlink(fname)
-    else:
-        raise IOError("Not A regular file: " + fname)
+
+        return ts.create_object(txt, kwargs)
+
+    raise IOError("Not A regular file: " + fname)
 
 
 def crawl_dir(mydir, dest):
@@ -44,7 +48,7 @@ def crawl_dir(mydir, dest):
                     raise e
 
         for s in subs:
-            crawl_dir(s)
+            crawl_dir(s, dest)
         os.chdir(top)
 
     else:

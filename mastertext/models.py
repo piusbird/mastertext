@@ -1,6 +1,10 @@
+# flake8: noqa: PLC0115
+"""Mastertext database models will be ignored by Flake8 because of
+pwiz generation so behave in here. Also Use Hive itself not any of HiveConfig and 
+friends
+"""
 from peewee import Model, BareField
 from peewee import CharField, IntegerField, DateTimeField, TextField
-from peewee import BooleanField
 from peewee import ForeignKeyField, CompositeKey
 from playhouse.sqlite_ext import SqliteExtDatabase
 from playhouse.sqlite_ext import RowIDField, SearchField

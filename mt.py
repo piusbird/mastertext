@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-import sys
-from mastertext.objectstore import TextObjectStore
-from mastertext.etl import inject_file, crawl_dir
-from mastertext.models import *
-import click
+"""Commandline interface to mastertext"""
 from getpass import getpass
 from os.path import isfile, isdir
-from mastertext.importer import fetch_and_parse
+import click
 from werkzeug.security import generate_password_hash
+from mastertext.objectstore import TextObjectStore
+from mastertext.etl import inject_file, crawl_dir
+from mastertext.models import database, NewUser
+from mastertext.importer import fetch_and_parse
+
 ts = TextObjectStore()
 
 
@@ -20,12 +21,12 @@ def cli():
 @click.argument('hash')
 @click.option('--attribs', default=False, help='Display Extended Attributes')
 @click.option('--less', default=False, help='Use the pager')
-def get(hash, attribs, less):
+def get(hashid, attribs, less):
     """
     Retrevie a document object from the database by it's
     hashid.
     """
-    tso = ts.retrieve_object(hash, attribs=False)
+    tso = ts.retrieve_object(hashid, attribs=False)
     if attribs:
         click.echo("Attributes are not supported yet")
         click.echo(tso)
@@ -55,7 +56,7 @@ def search(fts5term, less):
 def etl(ent, destroy):
 
     if isfile(ent):
-        inject_file(ent, destroy)
+        inject_file(ent, destroy=destroy)
     elif isdir(ent):
         crawl_dir(ent, destroy)
     else:

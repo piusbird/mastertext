@@ -1,6 +1,7 @@
 """Standard routes module"""
 from werkzeug.urls import url_parse
 import gevent
+from peewee import OperationalError
 from flask import render_template, request, flash, redirect
 from flask import render_template_string
 from flask import url_for, Response
@@ -24,10 +25,10 @@ bc = app.cache
 
 def flash_back_msgs():
     q = Error.select()
-    results = [r for r in q]
+    results = list(q)
     for r in results:
         flash(r.message)
-        Error.delete().where(id == r.id)
+        Error.delete().where(id == r.id) # noqa
 
 
 @app.route('/')
@@ -92,7 +93,7 @@ def search_result():
     try:
         q = queries.fulltext_search(term, page)
         meta['numpages'] = queries.total_pages(term)
-    except Exception as e:
+    except OperationalError as e:
         flash(str(e))
         flash("Try Again!")
         return render_template('search-main.html', title='Search', form=form)
@@ -114,8 +115,8 @@ def home():
 @app.route('/timeline')
 def timeline():
     flash_back_msgs()
-    timeline = queries.get_latest(250)
-    return render_template('timeline.html', title='Global Timeline', newstuff=timeline)
+    tl = queries.get_latest(250)
+    return render_template('timeline.html', title='Global Timeline', newstuff=tl)
 
 
 @app.route('/create', methods=['GET', 'POST'])
@@ -131,17 +132,14 @@ def create_blob():
             flash(blobinfo['hash'] + " Created Successfully")
             nwloc = blobinfo['hash']
             return redirect(f'/d/{nwloc}')
-        elif blobinfo['count'] > 1:
+        if blobinfo['count'] > 1:
             nwloc = blobinfo['hash']
             return redirect(f'/d/{nwloc}')
-        else:
-            flash("Coder error Replace Coder")
-            return redirect('/index')
-    else:
-        if clone is not None:
-            form.body.data = ts.retrieve_object(clone)
-            title = "Clone " + clone
-        return render_template('create.html', title=title, form=form)
+
+    if clone is not None:
+        form.body.data = ts.retrieve_object(clone)
+        title = "Clone " + clone
+    return render_template('create.html', title=title, form=form)
 
 
 @app.route('/import', methods=['GET', 'POST'])
@@ -154,14 +152,14 @@ def data_import():
         gevent.spawn(import_task, target)
         flash(f'{target} Importing')
         return redirect(url_for('data_import'))
-    else:
-        return render_template('data-import.html', form=form, title="Data Import")
+    # general case
+    return render_template('data-import.html', form=form, title="Data Import")
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = forms.LoginForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit():  # noqa
         user = NewUser.get(NewUser.username == form.username.data)
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
@@ -171,7 +169,7 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    else:
+    else: # noqa
         return render_template('login.html', form=form)
 
 

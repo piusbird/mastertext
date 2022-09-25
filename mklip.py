@@ -1,36 +1,38 @@
 #!/usr/bin/env python3
 # Mastertext Cliboard manager
-from dbus.mainloop.glib import DBusGMainLoop
-import dbus.service
-import dbus
-from gi.repository import Gtk, Gdk
-from mastertext.utils import sha1_id_object
-from mastertext.objectstore import *
-import re
-import fileinput
+"""Mastertext Clipboard management daemon"""
 import signal
 import sys
 import os
-import gi
-gi.require_version('Gtk', '3.0')
+from mastertext.utils import sha1_id_object
+from mastertext.objectstore import TextObjectStore, valid_hash, ObjectNotFoundError
+import gi  # noqa
+gi.require_version("Gtk", "3.0")
+import dbus  # noqa
+from dbus.mainloop.glib import DBusGMainLoop  # noqa
+import dbus.service  # noqa
+from gi.repository import Gtk, Gdk  # noqa
 
-END_OF_STACK = 'deadbeef' * 5
+END_OF_STACK = "deadbeef" * 5
 
 
 class NullDevice:
+    """A file like object that ignores everything you write to it"""
+
     def write(self, s):
         pass
 
 
-def hup_handle(sig, fr):
+def hup_handle(sig, fr):  # noqa
     sys.exit()
 
 
 class MiniKlipper(dbus.service.Object):
+    """A DBus service that implements the clipboard management"""
+
     def __init__(self):
-        bus_name = dbus.service.BusName(
-            'org.marnold.mklip', bus=dbus.SessionBus())
-        dbus.service.Object.__init__(self, bus_name, '/org/marnold/mklip')
+        bus_name = dbus.service.BusName("org.marnold.mklip", bus=dbus.SessionBus())
+        dbus.service.Object.__init__(self, bus_name, "/org/marnold/mklip")
         self.boardxs = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         self.amal_buffer = None
         self.textstore = TextObjectStore()
@@ -39,11 +41,11 @@ class MiniKlipper(dbus.service.Object):
         self.forwardstack = []
         self.forwardstack.append(END_OF_STACK)
 
-    @dbus.service.method('org.marnold.mklip')
+    @dbus.service.method("org.marnold.mklip")
     def getClipboardContents(self):
 
         text = self.boardxs.wait_for_text()
-        if text == None:
+        if text is None:
             return "Nothing to read"
         thishash = sha1_id_object(text)
         if thishash != self.hashstack[-1]:
@@ -51,7 +53,7 @@ class MiniKlipper(dbus.service.Object):
             self.hashstack.append(thishash)
         return text
 
-    @dbus.service.method('org.marnold.mklip')
+    @dbus.service.method("org.marnold.mklip")
     def getPid(self):
 
         pidstr = str(os.getpid())
@@ -83,19 +85,17 @@ class MiniKlipper(dbus.service.Object):
     def goBack(self):
         if self.hashstack[-1] == END_OF_STACK:
             return "at last item"
-        else:
-            ourhash = self.hashstack[-1]
-            self.forwardstack.append(self.hashstack.pop())
-            return self.textstore.retrieve_object(ourhash)
+        ourhash = self.hashstack[-1]
+        self.forwardstack.append(self.hashstack.pop())
+        return self.textstore.retrieve_object(ourhash)
 
     @dbus.service.method("org.marnold.mklip")
     def goForward(self):
         if self.forwardstack[-1] == END_OF_STACK:
             return "at first item"
-        else:
-            ourhash = self.forwardstack[-1]
-            self.hashstack.append(self.forwardstack.pop())
-            return self.textstore.retrieve_object(ourhash)
+        ourhash = self.forwardstack[-1]
+        self.hashstack.append(self.forwardstack.pop())
+        return self.textstore.retrieve_object(ourhash)
 
     @dbus.service.method("org.marnold.mklip")
     def getHashid(self, hashid):
@@ -103,7 +103,7 @@ class MiniKlipper(dbus.service.Object):
             try:
                 s = self.textstore.retrieve_object(hashid)
                 return s
-            except ObjectNotFoundError as e:
+            except ObjectNotFoundError:
                 return hashid + " not found"
         else:
             return "Not a valid hash"
@@ -111,18 +111,17 @@ class MiniKlipper(dbus.service.Object):
     @dbus.service.method("org.marnold.mklip")
     def hiveSearch(self, term):
         result = self.textstore.search_text(term)
-        if result['count'] < 1:
+        if result["count"] < 1:
             return "0 results for " + term
-        else:
-            nwstack = reversed(result['ids'])
-            self.hashstack.extend(nwstack)
-            return str(result['count']) + " documents on the stack"
+        nwstack = reversed(result["ids"])
+        self.hashstack.extend(nwstack)
+        return str(result["count"]) + " documents on the stack"
 
 
 pid = os.fork()
 
 if pid:
-    os._exit(0)  # kill the parent
+    os._exit(0)  # noqa kill the parent
 else:
     # Sets the child process as the pgroup leader
     # which we need to do or we will get killed off

@@ -1,13 +1,18 @@
+"""Singleton Classes
 # We wrap the database and TextObjectStore connections in a borg singleton
 # for now because we don't want the web app spawning more than one connection to
 # the db for data integraty reasons. This is an ugly HAX. To work around some
 # file system and SQLite issues
+"""
+
+
 import threading
 from mastertext.objectstore import TextObjectStore
 
 
 
-class StoreConnect(object):
+class StoreConnect:
+    """Connect to TextObjectStore safely"""
     _shared_borg_state = {}
 
     def __new__(cls, *args, **kwargs):
@@ -23,12 +28,13 @@ class StoreConnect(object):
         return self.ObjectStoreConnect
 
 
-class BorgCache(object):
+class BorgCache:
+    """Classic thread safe singleton for in memory caching"""
     _instance = None
     _lock = threading.Lock()
     cache = {}
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):  # noqa
         with cls._lock:
 
             if not cls._instance:

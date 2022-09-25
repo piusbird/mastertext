@@ -1,17 +1,15 @@
-# MasterText Garbage Collector
-from mastertext.models import Link, Hive
-import peewee
 """
+ MasterText Garbage Collector
 We Intened to build a content addressable file system from our Database schema;
 but you cannot enforce PRIMARY KEY constriants on a full text searchable table
 Thus in testing on V0 database duplicates were injected.
 
-Allowing duplicates expands the size of the on disk database by almost double, 
-slows down search by a factor of 4 at least, and prevents us from using the 
+Allowing duplicates expands the size of the on disk database by almost double,
+slows down search by a factor of 4 at least, and prevents us from using the
 full power of a KV store.
 
 To solve this we do two things we create the LinkTable see models.Links,
-and forbid the creation of duplicate objects from the API. 
+and forbid the creation of duplicate objects from the API
 But we still need a garbage collector, and deduplicator
 
 So we build a mark/sweep dedup; Kinda sorta if you squint **really** hard
@@ -21,6 +19,9 @@ create records in a way that leaves much garbage going forward.
 So it should only invoke worst case performance on rare occisions.
 """
 
+import peewee
+from mastertext.models import Link, Hive
+
 
 def dedup_mark(hashlist):
 
@@ -28,7 +29,7 @@ def dedup_mark(hashlist):
     for h in hashlist:
         print("Dedup on " + h)
         q = Hive.select(Hive.rowid).where(Hive.hashid == h)
-        possible = [int(str(r)) for r in q]
+        possible = [int(str(r)) for r in q] # noqa
         if len(possible) > 1:
             dups_li.append((h, possible))
 
@@ -45,10 +46,10 @@ def dedup_sweep(marks):
         except peewee.IntegrityError:
             lk = Link.get(phash=hid)
             if lk.count <= len(rows):
-                lk.count += (len(rows) - lk.count)
+                lk.count += len(rows) - lk.count
             else:
                 # We should not get here
-                # FIXME: This else is an error means
+                # TODO: This else is an error means
                 # that the refernce counter has gone bad
                 # the usual way of solving this is to walk the b-trees
                 # and refresh the counter from that but as this is treeless
@@ -63,7 +64,7 @@ def dedup_sweep(marks):
 
 def gc_mark_sweep():
     q = Link.select(Link.phash).where(Link.count < 1)
-    destroy = [str(r) for r in q]
+    destroy = [str(r) for r in q] # noqa
     return destroy
 
 
