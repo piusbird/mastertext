@@ -3,6 +3,7 @@
 
 import sqlite3
 from os.path import exists
+
 dbschema = """
 CREATE VIRTUAL TABLE hive USING fts5(id, inject_date, orighost, data);
 

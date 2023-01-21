@@ -18,9 +18,9 @@ def cli():
 
 
 @cli.command()
-@click.argument('hash')
-@click.option('--attribs', default=False, help='Display Extended Attributes')
-@click.option('--less', default=False, help='Use the pager')
+@click.argument("hash")
+@click.option("--attribs", default=False, help="Display Extended Attributes")
+@click.option("--less", default=False, help="Use the pager")
 def get(hashid, attribs, less):
     """
     Retrevie a document object from the database by it's
@@ -38,21 +38,21 @@ def get(hashid, attribs, less):
 
 
 @cli.command()
-@click.argument('fts5term')
-@click.option('--less', default=False, help='Use the pager')
+@click.argument("fts5term")
+@click.option("--less", default=False, help="Use the pager")
 def search(fts5term, less):
     search_id = ts.search_text(fts5term)
     echo_function = click.echo_via_pager if less else click.echo
-    il = search_id['ids']
+    il = search_id["ids"]
     echo_function("Results for: " + fts5term)
     for i in il:
         echo_function(i)
-    echo_function("Total = " + str(search_id['count']))
+    echo_function("Total = " + str(search_id["count"]))
 
 
 @cli.command()
-@click.argument('ent')
-@click.option('--destroy', default=False, help='Destroy originals when injecting')
+@click.argument("ent")
+@click.option("--destroy", default=False, help="Destroy originals when injecting")
 def etl(ent, destroy):
 
     if isfile(ent):
@@ -64,7 +64,7 @@ def etl(ent, destroy):
 
 
 @cli.command()
-@click.argument('username')
+@click.argument("username")
 def migrate_add_users(username):
     if not click.confirm("Warning this will destroy and reintalize the users table"):
         return 1
@@ -79,19 +79,38 @@ def migrate_add_users(username):
         NewUser.drop_table(safe=True)
         NewUser.create_table(safe=True)
         usr = NewUser.create(
-            username=username, email='test@example.com', password_hash=hashed)
+            username=username, email="test@example.com", password_hash=hashed
+        )
 
     click.echo(usr)
     return 0
 
 
 @cli.command
-@click.argument('url')
+@click.argument("username")
+def create_user(username):
+    usr = None
+    passwd = getpass(f"Enter password for {username}: ")
+    confirm = getpass("Confirm: ")
+    if passwd != confirm:
+        click.echo("password missmatch")
+        return 1
+    hashed = generate_password_hash(passwd)
+    email = click.prompt(f"Email address for {username}: ", default="test@example.com")
+    with database:
+        usr = NewUser.create(username=username, email=email, password_hash=hashed)
+
+    click.echo(usr)
+    return 0
+
+
+@cli.command
+@click.argument("url")
 def import_url(url):
     text = fetch_and_parse(url)
     created_object = ts.create_object(text)
     print(created_object)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

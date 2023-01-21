@@ -10,9 +10,9 @@ import threading
 from mastertext.objectstore import TextObjectStore
 
 
-
 class StoreConnect:
     """Connect to TextObjectStore safely"""
+
     _shared_borg_state = {}
 
     def __new__(cls, *args, **kwargs):
@@ -30,6 +30,7 @@ class StoreConnect:
 
 class BorgCache:
     """Classic thread safe singleton for in memory caching"""
+
     _instance = None
     _lock = threading.Lock()
     cache = {}

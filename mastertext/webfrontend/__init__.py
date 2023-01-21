@@ -18,7 +18,7 @@ app.config.from_object(Config)
 app.cache = BorgCache()
 app.db = FlaskDB(app)
 login = LoginManager(app)
-login.login_view = 'login'
+login.login_view = "login"
 
 
 @login.user_loader
@@ -26,4 +26,4 @@ def load_user(uid):
     return NewUser.get(NewUser.id == uid)
 
 
-from . import routes # noqa
+from . import routes  # noqa

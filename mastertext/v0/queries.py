@@ -4,6 +4,7 @@ import sqlite3
 import hashlib
 import os
 import socket
+
 """
 Please don't use any of the stuff in this file or subpackage
 It was part of the pre alpha version of this program
@@ -38,9 +39,9 @@ def insert_text(dbc, text):
     ourhost = os.getenv("mt_host", socket.gethostname())
     ds = datetime.now().strftime("%F")
     try:
-        buf = text.decode('utf-8')
+        buf = text.decode("utf-8")
     except UnicodeDecodeError as e:
-        buf = text.decode('iso-8859-1').encode('utf8')
+        buf = text.decode("iso-8859-1").encode("utf8")
 
         c = dbc.cursor()
         hashid = sample_buffer(buf)
@@ -64,9 +65,9 @@ def old_id_gen(buf):
     smpEnd = SAMPLE_SIZE - 1
     sample = buf if len(buf) < SAMPLE_SIZE else buf[0:smpEnd]
     try:
-        m.update(sample.encode('utf-8'))
+        m.update(sample.encode("utf-8"))
     except:
-        clean = sample.decode('iso-8859-1')
-        m.update(clean.encode('utf-8'))
+        clean = sample.decode("iso-8859-1")
+        m.update(clean.encode("utf-8"))
 
     return m.hexdigest()

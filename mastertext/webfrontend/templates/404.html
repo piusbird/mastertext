@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="pink-box"> <form action="/s" method="get">
+    {{ qs.hidden_tag() }}
+    <p>
+      <strong> Search:</strong>   {{ qs.term(size=50) }} <br/>
+      {{ qs.submit() }}
+    </p></div>
+    
+    {% if 'query' in data %}
+    <h1>Term: {{ data['query'] }} returned no results</h1>
+    {% else %}
+    <h1>Oops! Looks like the page doesn't exist </h1>
+    {% endif %}
+    <a href="{{ url_for('index') }}"><p>Click Here</a> To go to the Home Page</p>
+    
+{% endblock %}

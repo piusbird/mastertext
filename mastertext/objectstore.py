@@ -85,7 +85,7 @@ class TextObjectStore:
             raise MasterTextError("Not a hash")
 
         hashin = phash + "%"  # sqlite wildcard
-        hrows = [r for r in Link.select().where(Link.phash**hashin)] # noqa
+        hrows = [r for r in Link.select().where(Link.phash**hashin)]  # noqa
         # fake8 doesn't understand peewee
 
         if len(hrows) > 1:
@@ -100,7 +100,9 @@ class TextObjectStore:
         return textobj if attribs else textobj["data"]
 
     @database.atomic("IMMEDIATE")
-    def create_object(self, data, *args, orphen=False, **kwargs): # noqa for api extensions
+    def create_object(
+        self, data, *args, orphen=False, **kwargs
+    ):  # noqa for api extensions
         """
         Creates and stores a document object
         Takes the data to be stored as a utf-8 string.

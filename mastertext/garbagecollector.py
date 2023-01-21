@@ -29,7 +29,7 @@ def dedup_mark(hashlist):
     for h in hashlist:
         print("Dedup on " + h)
         q = Hive.select(Hive.rowid).where(Hive.hashid == h)
-        possible = [int(str(r)) for r in q] # noqa
+        possible = [int(str(r)) for r in q]  # noqa
         if len(possible) > 1:
             dups_li.append((h, possible))
 
@@ -64,7 +64,7 @@ def dedup_sweep(marks):
 
 def gc_mark_sweep():
     q = Link.select(Link.phash).where(Link.count < 1)
-    destroy = [str(r) for r in q] # noqa
+    destroy = [str(r) for r in q]  # noqa
     return destroy
 
 

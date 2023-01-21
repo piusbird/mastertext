@@ -18,7 +18,7 @@ database = SqliteExtDatabase(dbpath)  # set database at run time
 
 
 class UnknownField(object):
-    def __init__(self, *_, **__): 
+    def __init__(self, *_, **__):
         pass
 
 
@@ -35,17 +35,17 @@ class Hive(FTS5Model):
     orighost = SearchField()
 
     class Meta:
-        table_name = 'hive'
+        table_name = "hive"
         primary_key = False
         database = database
 
 
 class Extracts(BaseModel):
     blurb = CharField(null=True)
-    parent = ForeignKeyField(column_name='parent_id', model=Hive, null=True)
+    parent = ForeignKeyField(column_name="parent_id", model=Hive, null=True)
 
     class Meta:
-        table_name = 'extracts'
+        table_name = "extracts"
         primary_key = False
 
 
@@ -54,7 +54,7 @@ class HiveConfig(BaseModel):
     v = BareField(null=True)
 
     class Meta:
-        table_name = 'hive_config'
+        table_name = "hive_config"
 
 
 class HiveContent(BaseModel):
@@ -64,21 +64,21 @@ class HiveContent(BaseModel):
     c3 = BareField(null=True)
 
     class Meta:
-        table_name = 'hive_content'
+        table_name = "hive_content"
 
 
 class HiveData(BaseModel):
     block = BlobField(null=True)
 
     class Meta:
-        table_name = 'hive_data'
+        table_name = "hive_data"
 
 
 class HiveDocsize(BaseModel):
     sz = BlobField(null=True)
 
     class Meta:
-        table_name = 'hive_docsize'
+        table_name = "hive_docsize"
 
 
 class HiveIdx(BaseModel):
@@ -87,8 +87,8 @@ class HiveIdx(BaseModel):
     term = BareField()
 
     class Meta:
-        table_name = 'hive_idx'
-        primary_key = CompositeKey('segid', 'term')
+        table_name = "hive_idx"
+        primary_key = CompositeKey("segid", "term")
 
 
 class Link(BaseModel):

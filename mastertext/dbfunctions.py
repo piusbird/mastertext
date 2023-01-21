@@ -4,7 +4,7 @@ from mastertext.models import *
 from mastertext.utils import *
 
 fsck_queries = {
-    'link_table_rebuild': "select hashid from hive where hashid not in (select phash from link);"
+    "link_table_rebuild": "select hashid from hive where hashid not in (select phash from link);"
 }
 """
 This function fixes a databse corruption issue
@@ -40,7 +40,7 @@ def reid_all_objects(bad_id):
             newid = sha1_id_object(row.data)
         except EncodingError:
             if fix_encoding(row.rowid):
-                newid = sha1_id_object(row.data.decode('utf-8'))
+                newid = sha1_id_object(row.data.decode("utf-8"))
             else:
                 print("unrecoverable encoding error on " + str(row.rowid))
                 break
@@ -54,15 +54,17 @@ def reid_all_objects(bad_id):
         u = Hive.update(hashid=newid).where(Hive.rowid == roid)
         if u.execute() != 1:
             raise MasterTextError(
-                "Write my TestCase and replace this error when your done kthanks!")
+                "Write my TestCase and replace this error when your done kthanks!"
+            )
 
 
 def fix_encoding(bad_rowid):
 
     qs = Hive.select().where(Hive.rowid == bad_rowid)
-    fix = qs[0].data.decode('utf-8')
+    fix = qs[0].data.decode("utf-8")
     u = Hive.update(data=fix).where(Hive.rowid == bad_rowid)
     return u.execute()
+
 
 # UGLY HACK WARNING Woohp Woohp
 # Didn't know what i was doing the first
@@ -76,7 +78,7 @@ def rebuild_link_table():
     Rebuild a damaged on missing link table
     dedup should run first if needed
     """
-    q = database.execute_sql(fsck_queries['link_table_rebuild'])
+    q = database.execute_sql(fsck_queries["link_table_rebuild"])
     for r in q.fetchall():
         print("linking " + str(r[0]))
         Link.create(phash=str(r[0]), count=1)
