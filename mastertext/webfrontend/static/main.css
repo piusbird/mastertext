@@ -15,7 +15,7 @@
   --blockquote-border-light: 0.5ch solid hsla(var(--accent-color), 50%, 30%, 100%);
   --background-color: #9d37f3;
   --text-color: #effdfe;
-  --accent-color: 200;
+  --accent-color: #200;
   --font-family: monospace, monospace;
   --width: 80ch;
   --padding: 0px 10px;
@@ -77,7 +77,7 @@ footer {
 
 @media (prefers-color-scheme: light) {
   ::selection {
-    background: var(--selection-light);
+    background: #aa0000;
   }
 
   body {
@@ -173,4 +173,14 @@ footer {
   border: 2px solid var(--blockquote-border);
   padding: auto;
   align-items: center;
+}
+
+@media (prefers-color-scheme: dark) {
+html {
+	filter: invert(100%);
+  -webkit-filter: invert(100%);
+  -moz-filter: invert(100%);
+  -o-filter: invert(100%);
+  -ms-filter: invert(100%);
+}
 }

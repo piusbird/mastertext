@@ -5,6 +5,7 @@ from peewee import OperationalError
 from flask import render_template, request, flash, redirect
 from flask import render_template_string
 from flask import url_for, Response
+from flask import send_from_directory
 from flask_login import login_required
 from flask_login import logout_user, login_user
 from mastertext.webfrontend import app
@@ -192,4 +193,13 @@ def page_not_found(e):
             "404.html", qs=qs, data={"error": str(e)}, title="Four oh four"
         ),
         404,
+    )
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, "static"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon",
     )
