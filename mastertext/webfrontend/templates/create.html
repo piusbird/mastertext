@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+<script src="{{ url_for('static',  filename='bower_components/simplemde/dist/simplemde.min.js') }}">
+</script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', 
+    filename='bower_components/simplemde/dist/simplemde.min.css') }}">
 
 <h1>Blob Create</h1>
 

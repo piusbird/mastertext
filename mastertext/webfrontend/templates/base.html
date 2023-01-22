@@ -4,10 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', 
-    filename='bower_components/simplemde/dist/simplemde.min.css') }}">
-<script src="{{ url_for('static',  filename='bower_components/simplemde/dist/simplemde.min.js') }}">
-</script>
+
 {% if title %}
  <title>{{ title }} - MasterText</title>
 {% else %}
@@ -15,9 +12,9 @@
 {% endif %}
 </head>
 
-<body>
+<body id="top">
   
-<div class="sidebar"> 
+<div class="sidenav"> 
   <a href="/index"> ⭐ Home </a> <br/> 
   <a href="/s"> 🔎 Search </a> <br/> 
    <a href="/create"> 🦸Create </a><br/>
@@ -33,18 +30,21 @@
 </div>
 <hr>
 <hr>
-<span style="color: peru;"> {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <marquee width="60%" direction="up" height="100px">
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        </marquee>
-        {% endif %}
-        {% endwith %}
-        </span>
-<div class="app-content"> {% block content %}{% endblock %} </div>
+        <main>
+          <error-msgs>{% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <marquee width="60%" direction="up" height="100px">
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            </marquee>
+            {% endif %}
+          </error-msgs>
+          {% endwith %}
+        <div class="app-content"> 
+  {% block content %}{% endblock %} </div> 
+</main>
 </body>
 </html>
