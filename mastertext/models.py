@@ -12,7 +12,7 @@ from playhouse.sqlite_ext import BlobField, FTS5Model
 from mastertext.settings import dbpath
 from flask_login import UserMixin as LUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import datetime
 
 database = SqliteExtDatabase(dbpath)  # set database at run time
 
@@ -124,3 +124,9 @@ class NewUser(LUserMixin, BaseModel):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class WordImage(BaseModel):
+    data = TextField() # base64 encoded image data
+    phash = CharField(primary_key=True)
+    timestamp = DateTimeField(default=datetime.datetime.now)

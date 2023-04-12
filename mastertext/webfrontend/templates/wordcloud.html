@@ -7,11 +7,16 @@
 <a href="{{url_for('orig_document', hashid=docdata.hash) }}">📖 View Original</a>
 <a href="{{url_for('word_cloud', hashid=docdata.hash) }}"> ☁️ Word Cloud</a>
 <hr>
-<h1> Document {{ docdata.hash }} </h1>
+<h1> Wordcloud for {{ docdata.hash }} </h1>
 
 <article>
 <div class="cm">
-        {{docdata.doc|markdown }}
+    {% if docdata.img %}
+    <img src="data:image/png;base64,{{docdata.img | safe}}"/>
+    {% else %}
+    <p> Wordcloud is being created</p>
+    {% endif %}
+
     
 </div>
 </article>

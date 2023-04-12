@@ -1,4 +1,5 @@
 """Standard routes module"""
+import os
 from werkzeug.urls import url_parse
 import gevent
 from peewee import OperationalError
@@ -13,10 +14,11 @@ from mastertext.webfrontend import queries
 from mastertext.webfrontend import forms
 from mastertext.singleton import StoreConnect
 from mastertext.objectstore import valid_hash
-from mastertext.webfrontend.tasks import import_task
+from mastertext.webfrontend.tasks import import_task, generate_wordimage_single
 from mastertext.objectstore import ObjectNotFoundError
 from mastertext.models import NewUser
-from mastertext.models import Error
+from mastertext.models import Error, WordImage
+
 
 
 ts = StoreConnect().get_objstore()
@@ -174,8 +176,8 @@ def login():
         if not next_page or url_parse(next_page).netloc != "":
             next_page = url_for("index")
         return redirect(next_page)
-    else:  # noqa
-        return render_template("login.html", form=form)
+
+    return render_template("login.html", form=form)
 
 
 @app.route("/logout")
@@ -187,6 +189,7 @@ def logout():
 
 @app.errorhandler(404)
 def page_not_found(e):
+    """404 errorhandler"""
     qs = forms.SearchForm()
     return (
         render_template(
@@ -196,8 +199,40 @@ def page_not_found(e):
     )
 
 
+
+@app.route("/d/<string:hashid>/cloud")
+@login_required
+def word_cloud(hashid):
+    flash_back_msgs()
+    result = ""
+    metadata = None
+    if not valid_hash(hashid):
+        return "Not a valid hash", 401
+    
+    try:
+        tmp = ts.retrieve_object(hashid)
+    except ObjectNotFoundError as e:
+        return str(e), 404
+
+    try:
+        result = WordImage.get(WordImage.phash == hashid)
+        metadata = {"hash": hashid, "img": result.data}
+        resp = render_template(
+            "wordcloud.html", title="wc for  " + hashid, docdata=metadata
+        )
+        return resp
+
+    except Exception as e:
+        gevent.spawn(generate_wordimage_single, hashid)
+        flash("Creating Image Try again latert")
+        return redirect("view_document", hashid=hashid)
+    
+    return 502
+    
+
 @app.route("/favicon.ico")
 def favicon():
+    """returns a favicon"""
     return send_from_directory(
         os.path.join(app.root_path, "static"),
         "favicon.ico",
