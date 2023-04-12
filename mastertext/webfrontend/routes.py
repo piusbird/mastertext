@@ -225,7 +225,7 @@ def word_cloud(hashid):
     except Exception as e:
         gevent.spawn(generate_wordimage_single, hashid)
         flash("Creating Image Try again latert")
-        return redirect("view_document", hashid=hashid)
+        return redirect(url_for("view_document", hashid=hashid))
     
     return 502
     
