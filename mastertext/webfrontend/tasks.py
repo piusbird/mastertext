@@ -8,6 +8,8 @@ from mastertext.webfrontend import app
 from mastertext.models import Error, WordImage
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+from matplotlib import colormaps as cm 
+import random
 from io import BytesIO
 import base64
 
@@ -31,7 +33,8 @@ def flush_cache():
 
 
 def __wordcloud(text):
-    wordcloud = WordCloud(width=800, height=800, background_color='white', min_font_size=10).generate(text)
+    clrs = random.choice(cm())
+    wordcloud = WordCloud(width=800, height=800, background_color='black',colormap=clrs, min_font_size=10).generate(text)
 
     # Convert the WordCloud object to an image
     plt.figure(figsize=(8,8), facecolor=None)
@@ -62,6 +65,7 @@ def generate_wordimage_single(hashid):
             return
     cloud = __wordcloud(text)
     WordImage.create(phash=hashid, data=cloud)
+    
 
     
 
