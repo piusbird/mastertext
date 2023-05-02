@@ -20,7 +20,6 @@ from mastertext.models import NewUser
 from mastertext.models import Error, WordImage
 
 
-
 ts = StoreConnect().get_objstore()
 bc = app.cache
 
@@ -199,7 +198,6 @@ def page_not_found(e):
     )
 
 
-
 @app.route("/d/<string:hashid>/cloud")
 @login_required
 def word_cloud(hashid):
@@ -208,7 +206,7 @@ def word_cloud(hashid):
     metadata = None
     if not valid_hash(hashid):
         return "Not a valid hash", 401
-    
+
     try:
         tmp = ts.retrieve_object(hashid)
     except ObjectNotFoundError as e:
@@ -226,9 +224,9 @@ def word_cloud(hashid):
         gevent.spawn(generate_wordimage_single, hashid)
         flash("Creating Image Try again latert")
         return redirect(url_for("view_document", hashid=hashid))
-    
+
     return 502
-    
+
 
 @app.route("/favicon.ico")
 def favicon():
