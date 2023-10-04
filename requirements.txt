@@ -46,7 +46,7 @@ packaging==23.0
 passlib==1.7.4
 pathspec==0.10.1
 peewee==3.13.2
-Pillow==9.5.0
+Pillow==10.0.1
 platformdirs==2.5.2
 pycairo==1.21.0
 pycodestyle==2.9.1
