@@ -53,12 +53,13 @@ def search(fts5term, less):
 @cli.command()
 @click.argument("ent")
 @click.option("--destroy", default=False, help="Destroy originals when injecting")
-def etl(ent, destroy):
+@click.option("--mdate", default=False, help="Ugly Hack you know what it does")
+def etl(ent, destroy, mdate):
 
     if isfile(ent):
-        inject_file(ent, destroy=destroy)
+        inject_file(ent, destroy=destroy, magic_date=mdate)
     elif isdir(ent):
-        crawl_dir(ent, destroy)
+        crawl_dir(ent, destroy, mdate)
     else:
         click.echo("Not a file i can ETL")
 

@@ -28,12 +28,12 @@ this may remind you of the git object id algorithim. This is not unintentional
 
 
 def sha1_id_object(txt, enc="utf-8"):
-
+    #print(type(txt))
     hdr = enc + " " + str(len(txt)) + "\x00"
     try:
         base = hdr + txt
     except TypeError:
-        raise EncodingError("not utf-8")
+        base = hdr + txt.decode("utf-8")
     return hashlib.sha1(base.encode()).hexdigest()
 
 

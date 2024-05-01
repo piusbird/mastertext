@@ -31,7 +31,7 @@ def inject_file(fname, **kwargs):
     raise IOError("Not A regular file: " + fname)
 
 
-def crawl_dir(mydir, dest):
+def crawl_dir(mydir, dest, md):
 
     top = os.getcwd()
     subs = []
@@ -40,7 +40,7 @@ def crawl_dir(mydir, dest):
         contents = os.listdir()
         for f in contents:
             try:
-                print(inject_file(f, destroy=dest))
+                print(inject_file(f, destroy=dest, magic_date=md))
             except IOError as e:
                 if os.path.isdir(f):
                     subs.append(f)
@@ -48,7 +48,7 @@ def crawl_dir(mydir, dest):
                     raise e
 
         for s in subs:
-            crawl_dir(s, dest)
+            crawl_dir(s, dest, md)
         os.chdir(top)
 
     else:

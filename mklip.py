@@ -4,6 +4,7 @@
 import signal
 import sys
 import os
+from threading import Thread
 from mastertext.utils import sha1_id_object
 from mastertext.objectstore import TextObjectStore, valid_hash, ObjectNotFoundError
 import gi  # noqa
@@ -13,6 +14,8 @@ import dbus  # noqa
 from dbus.mainloop.glib import DBusGMainLoop  # noqa
 import dbus.service  # noqa
 from gi.repository import Gtk, Gdk  # noqa
+from bottle import Bottle, run
+
 
 END_OF_STACK = "deadbeef" * 5
 
@@ -119,28 +122,43 @@ class MiniKlipper(dbus.service.Object):
         return str(result["count"]) + " documents on the stack"
 
 
-pid = os.fork()
 
-if pid:
-    os._exit(0)  # noqa kill the parent
-else:
-    # Sets the child process as the pgroup leader
-    # which we need to do or we will get killed off
-    # when our parent process exits
-
-    os.setpgrp()
-    os.umask(0)  # set minimal permissions on all files created from here on
-
-    print(os.getpid())  # to aid in stoping the server
-    # Finally we close our connection to the controlling terminal
-    # Since in python that's difficult to do without issues
-    # we change stdout and stderr to a Null file like object
-    sys.stdin.close()
-    sys.stdout = NullDevice()
-    sys.stderr = NullDevice()
-
-signal.signal(signal.SIGHUP, hup_handle)
-signal.signal(signal.SIGTERM, hup_handle)
 DBusGMainLoop(set_as_default=True)
 myservice = MiniKlipper()
-Gtk.main()
+app = Bottle()
+@app.route('/current')
+def current():
+    return myservice.getClipboardContents()
+
+@app.route('/h/<id>')
+def get_hash(hashid):
+    return myservice.getHashid(hashid)
+
+if __name__ == '__main__':
+    pid = os.fork()
+
+    if pid:
+        os._exit(0)  # noqa kill the parent
+    else:
+        # Sets the child process as the pgroup leader
+        # which we need to do or we will get killed off
+        # when our parent process exits
+
+        os.setpgrp()
+        os.umask(0)  # set minimal permissions on all files created from here on
+
+        print(os.getpid())  # to aid in stoping the server
+        # Finally we close our connection to the controlling terminal
+        # Since in python that's difficult to do without issues
+        # we change stdout and stderr to a Null file like object
+        sys.stdin.close()
+        sys.stdout = NullDevice()
+        sys.stderr = NullDevice()
+
+    signal.signal(signal.SIGHUP, hup_handle)
+    signal.signal(signal.SIGTERM, hup_handle)
+    thdd_kwargs = {"host": 'localhost', "port": 4242}
+    thdd = Thread(target= run, args=(app), kwargs= thdd_kwargs)
+    thdd.start()
+    Gtk.main()
+    thdd.join()

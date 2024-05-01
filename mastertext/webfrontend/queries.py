@@ -10,7 +10,12 @@ def get_latest(numents):
 
     results = []
     for e in Hive.select().order_by(Hive.inject_date.desc()).limit(numents):
-        results.append({"id": e.hashid, "date": e.inject_date, "sample": e.data[0:399]})
+        sampledata = e.data[0:399]
+        try:
+            sampledata = sampledata.decode()
+        except (UnicodeDecodeError, AttributeError):
+            pass
+        results.append({"id": e.hashid, "date": e.inject_date, "sample": sampledata})
     return results
 
 
@@ -38,12 +43,17 @@ def fulltext_search(fts5term, page=1, items=PERPAGE):
         raise MasterTextError(str(e)) from e
     result = []
     for e in sq:
+        sampledata = e.data[0:399]
+        try:
+            sampledata =  sampledata.decode()
+        except (UnicodeDecodeError, AttributeError):
+            pass
         result.append(
             {
                 "total": count_total,
                 "id": e.hashid,
                 "date": e.inject_date,
-                "sample": e.data[0:399],
+                "sample": sampledata,
             }
         )
 

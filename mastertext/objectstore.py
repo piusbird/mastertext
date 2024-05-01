@@ -11,6 +11,7 @@ import peewee
 from mastertext.models import Hive, database, Link
 from mastertext.utils import MasterTextError, sha1_id_object
 
+MAGIC_DATE = "04/18/1989 15:04:32"
 # Confession time the only reason this is not written in Haskell is
 # I needed it yesterday
 # And I'm out of practice but there will be lambdas and monads
@@ -101,7 +102,7 @@ class TextObjectStore:
 
     @database.atomic("IMMEDIATE")
     def create_object(
-        self, data, *args, orphen=False, **kwargs
+        self, data, orphen=False, *args,**kwargs
     ):  # noqa for api extensions
         """
         Creates and stores a document object
@@ -121,6 +122,9 @@ class TextObjectStore:
 
         Will raise a type error if data to be injected is not text
         """
+        dt = datetime.now()
+        if "magic_date" in kwargs and kwargs['magic_date']:
+            dt = datetime.strptime(MAGIC_DATE, '%m/%d/%y %H:%M:%S')
         newhash = sha1_id_object(data)
         try:
             lh = Link.create(phash=newhash, count=1)
@@ -128,14 +132,14 @@ class TextObjectStore:
             lh = Link.get(Link.phash == newhash)
             lh.count += 1
             lh.save()
-            Hive.update(inject_date=str(datetime.now())).where(Hive.hashid == newhash)
+            Hive.update(inject_date=str(dt)).where(Hive.hashid == newhash)
             if not orphen:
                 return {"hash": lh.phash, "count": lh.count}
 
         defaults = {
             "hashid": lh.phash,
             "data": data,
-            "inject_date": str(datetime.now()),
+            "inject_date": str(dt),
             "orighost": gethostname(),
         }
         combined = ChainMap(kwargs, defaults)
