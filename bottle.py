@@ -81,28 +81,28 @@ if __name__ == "__main__":
 # Imports and Python 2/3 unification ##########################################
 ###############################################################################
 
-import base64
-import calendar
-import cgi
-import email.utils
-import functools
-import hmac
-import itertools
-import mimetypes
-import os
-import re
-import tempfile
-import threading
-import time
-import warnings
-import weakref
-import hashlib
+import base64  # noqa
+import calendar  # noqa
+import cgi  # noqa
+import email.utils  # noqa
+import functools  # noqa
+import hmac  # noqa
+import itertools  # noqa
+import mimetypes  # noqa
+import os  # noqa
+import re  # noqa
+import tempfile  # noqa
+import threading  # noqa
+import time  # noqa
+import warnings  # noqa
+import weakref  # noqa
+import hashlib  # noqa
 
-from types import FunctionType
-from datetime import date as datedate, datetime, timedelta
-from tempfile import NamedTemporaryFile
-from traceback import format_exc, print_exc
-from unicodedata import normalize
+from types import FunctionType  # noqa
+from datetime import date as datedate, datetime, timedelta  # noqa
+from tempfile import NamedTemporaryFile  # noqa
+from traceback import format_exc, print_exc  # noqa
+from unicodedata import normalize  # noqa
 
 try:
     from ujson import dumps as json_dumps, loads as json_lds
@@ -138,8 +138,8 @@ if py3k:
 
     basestring = str
     unicode = str
-    json_loads = lambda s: json_lds(touni(s))
-    callable = lambda x: hasattr(x, "__call__")
+    json_loads = lambda s: json_lds(touni(s))  # noqa
+    callable = lambda x: hasattr(x, "__call__")  # noqa
     imap = map
 
     def _raise(*a):
@@ -1202,7 +1202,7 @@ class Bottle(object):
         elif isinstance(first, bytes):
             new_iter = itertools.chain([first], iout)
         elif isinstance(first, unicode):
-            encoder = lambda x: x.encode(response.charset)
+            encoder = lambda x: x.encode(response.charset)  # noqa
             new_iter = imap(encoder, itertools.chain([first], iout))
         else:
             msg = "Unsupported response type: %s" % type(first)
@@ -4012,7 +4012,7 @@ def run(
         pass
     except (SystemExit, MemoryError):
         raise
-    except:
+    except Exception:
         if not reloader:
             raise
         if not getattr(server, "quiet", quiet):
@@ -4034,7 +4034,7 @@ class FileCheckerThread(threading.Thread):
 
     def run(self):
         exists = os.path.exists
-        mtime = lambda p: os.stat(p).st_mtime
+        mtime = lambda p: os.stat(p).st_mtime  # noqa
         files = dict()
 
         for module in list(sys.modules.values()):
