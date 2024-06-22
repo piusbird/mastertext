@@ -1,4 +1,5 @@
-""" Module with functions to import various texts from external sources"""
+"""Module with functions to import various texts from external sources"""
+
 import urllib.request as urllib2
 from bs4 import BeautifulSoup
 from mastertext.utils import MasterTextError
@@ -11,7 +12,6 @@ DEFAULT_USER_AGENT = (
 def fetch_and_parse(url, user_agent=DEFAULT_USER_AGENT):
     req = urllib2.Request(url, data=None, headers={"User-Agent": user_agent})
     try:
-
         with urllib2.urlopen(req) as html_page:
             soup = BeautifulSoup(html_page, features="lxml")
             text = soup.find_all(text=True)

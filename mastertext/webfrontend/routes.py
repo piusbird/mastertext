@@ -1,6 +1,9 @@
 """Standard routes module"""
+
 import os
-from werkzeug.urls import url_parse
+from urllib.parse import urlparse
+
+url_parse = urlparse
 import gevent
 from peewee import OperationalError
 from flask import render_template, request, flash, redirect
@@ -220,7 +223,7 @@ def word_cloud(hashid):
         )
         return resp
 
-    except Exception as e:
+    except Exception:
         gevent.spawn(generate_wordimage_single, hashid)
         flash("Creating Image Try again latert")
         return redirect(url_for("view_document", hashid=hashid))

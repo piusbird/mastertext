@@ -1,6 +1,5 @@
 # queries.py common querys for MasterText, and other utility functions
 
-import sqlite3
 import hashlib
 import os
 import socket
@@ -35,12 +34,11 @@ ijqs = "INSERT INTO hive VALUES (?,?,?,?)"
 
 
 def insert_text(dbc, text):
-
     ourhost = os.getenv("mt_host", socket.gethostname())
     ds = datetime.now().strftime("%F")
     try:
         buf = text.decode("utf-8")
-    except UnicodeDecodeError as e:
+    except UnicodeDecodeError:
         buf = text.decode("iso-8859-1").encode("utf8")
 
         c = dbc.cursor()
@@ -57,10 +55,10 @@ def insert_text(dbc, text):
 # with a 1k sample results in more collisions
 # then i wanted
 
+
 # so we will have to ditch the collision plan
 # and implement diff/compare properly when we need it
 def old_id_gen(buf):
-
     m = hashlib.blake2b()
     smpEnd = SAMPLE_SIZE - 1
     sample = buf if len(buf) < SAMPLE_SIZE else buf[0:smpEnd]

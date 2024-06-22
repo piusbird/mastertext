@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Flask local server"""
+
 from gevent import monkey
 
 monkey.patch_all()

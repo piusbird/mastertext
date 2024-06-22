@@ -33,7 +33,6 @@ You can tell if this has happened if selects on object ids start returning way m
 
 
 def reid_all_objects(bad_id):
-
     allData = Hive.select().where(Hive.hashid == bad_id)
     for row in allData.iterator():
         try:
@@ -59,7 +58,6 @@ def reid_all_objects(bad_id):
 
 
 def fix_encoding(bad_rowid):
-
     qs = Hive.select().where(Hive.rowid == bad_rowid)
     fix = qs[0].data.decode("utf-8")
     u = Hive.update(data=fix).where(Hive.rowid == bad_rowid)

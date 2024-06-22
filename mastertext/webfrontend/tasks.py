@@ -1,4 +1,5 @@
 """Backround tasks for webapp"""
+
 from io import BytesIO
 import base64
 import random
@@ -57,7 +58,6 @@ def __wordcloud(text):
 
 
 def generate_wordimage_single(hashid):
-
     gevent.idle()
     ts = StoreConnect().get_objstore()
     text = None

@@ -1,4 +1,5 @@
 """Misc Database Queries for webfrontend"""
+
 from peewee import OperationalError
 from mastertext.models import Hive
 from mastertext.utils import MasterTextError
@@ -7,7 +8,6 @@ PERPAGE = 15
 
 
 def get_latest(numents):
-
     results = []
     for e in Hive.select().order_by(Hive.inject_date.desc()).limit(numents):
         sampledata = e.data[0:399]
@@ -45,7 +45,7 @@ def fulltext_search(fts5term, page=1, items=PERPAGE):
     for e in sq:
         sampledata = e.data[0:399]
         try:
-            sampledata =  sampledata.decode()
+            sampledata = sampledata.decode()
         except (UnicodeDecodeError, AttributeError):
             pass
         result.append(

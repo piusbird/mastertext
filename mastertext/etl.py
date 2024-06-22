@@ -2,6 +2,7 @@
 MasterText Extract, Transform, Load APIs,
 and related utility functions
 """
+
 import os
 from mastertext.objectstore import TextObjectStore
 
@@ -9,7 +10,6 @@ ts = TextObjectStore()
 
 
 def inject_file(fname, **kwargs):
-
     if os.path.isfile(fname) or (
         os.path.islink(fname) and os.path.isfile(os.readlink(fname))
     ):
@@ -32,7 +32,6 @@ def inject_file(fname, **kwargs):
 
 
 def crawl_dir(mydir, dest, md):
-
     top = os.getcwd()
     subs = []
     if os.path.isdir(mydir):

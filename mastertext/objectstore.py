@@ -2,6 +2,7 @@
 MasterText Object Store class. Stores text in an FTS5 database using
 a derivitive of the git blob storage algorithm to save space
 """
+
 import re
 from datetime import datetime
 from collections import ChainMap
@@ -101,9 +102,7 @@ class TextObjectStore:
         return textobj if attribs else textobj["data"]
 
     @database.atomic("IMMEDIATE")
-    def create_object(
-        self, data, orphen=False, *args,**kwargs
-    ):  # noqa for api extensions
+    def create_object(self, data, orphen=False, *args, **kwargs):  # noqa for api extensions
         """
         Creates and stores a document object
         Takes the data to be stored as a utf-8 string.
@@ -123,8 +122,8 @@ class TextObjectStore:
         Will raise a type error if data to be injected is not text
         """
         dt = datetime.now()
-        if "magic_date" in kwargs and kwargs['magic_date']:
-            dt = datetime.strptime(MAGIC_DATE, '%m/%d/%y %H:%M:%S')
+        if "magic_date" in kwargs and kwargs["magic_date"]:
+            dt = datetime.strptime(MAGIC_DATE, "%m/%d/%y %H:%M:%S")
         newhash = sha1_id_object(data)
         try:
             lh = Link.create(phash=newhash, count=1)
@@ -178,7 +177,6 @@ class TextObjectStore:
 
     @database.atomic("IMMEDIATE")
     def delete_object(self, hashid):
-
         try:
             lh = Link.get(phash=hashid)
             lh.count -= 1

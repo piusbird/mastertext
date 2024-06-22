@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Mastertext Cliboard manager
 """Mastertext Clipboard management daemon"""
+
 import signal
 import sys
 import os
@@ -47,7 +48,6 @@ class MiniKlipper(dbus.service.Object):
 
     @dbus.service.method("org.marnold.mklip")
     def getClipboardContents(self):
-
         text = self.boardxs.wait_for_text()
         if text is None:
             return "Nothing to read"
@@ -59,7 +59,6 @@ class MiniKlipper(dbus.service.Object):
 
     @dbus.service.method("org.marnold.mklip")
     def getPid(self):
-
         pidstr = str(os.getpid())
         return pidstr
 
@@ -122,19 +121,22 @@ class MiniKlipper(dbus.service.Object):
         return str(result["count"]) + " documents on the stack"
 
 
-
 DBusGMainLoop(set_as_default=True)
 myservice = MiniKlipper()
 app = Bottle()
-@app.route('/current')
+
+
+@app.route("/current")
 def current():
     return myservice.getClipboardContents()
 
-@app.route('/h/<id>')
+
+@app.route("/h/<id>")
 def get_hash(hashid):
     return myservice.getHashid(hashid)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     pid = os.fork()
 
     if pid:
@@ -157,8 +159,8 @@ if __name__ == '__main__':
 
     signal.signal(signal.SIGHUP, hup_handle)
     signal.signal(signal.SIGTERM, hup_handle)
-    thdd_kwargs = {"host": 'localhost', "port": 4242}
-    thdd = Thread(target= run, args=(app), kwargs= thdd_kwargs)
+    thdd_kwargs = {"host": "localhost", "port": 4242}
+    thdd = Thread(target=run, args=(app), kwargs=thdd_kwargs)
     thdd.start()
     Gtk.main()
     thdd.join()

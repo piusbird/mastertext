@@ -21,7 +21,6 @@ class MasterTextError(Exception):
 
 
 def create_db(fpath):
-
     if exists(fpath):
         raise MasterTextError("file exists")
 
@@ -33,17 +32,15 @@ def create_db(fpath):
 
 
 def create_or_connect(fpath):
-
     try:
         create_db(fpath)
 
-    except MasterTextError as e:
+    except MasterTextError:
         pass
     return sqlite3.connect(fpath)
 
 
 def strict_connect(fpath):
-
     if exists(fpath):
         return sqlite3.connect(fpath)
     else:

@@ -24,7 +24,6 @@ from mastertext.models import Link, Hive
 
 
 def dedup_mark(hashlist):
-
     dups_li = []
     for h in hashlist:
         print("Dedup on " + h)
@@ -37,7 +36,6 @@ def dedup_mark(hashlist):
 
 
 def dedup_sweep(marks):
-
     destuction = []
     for m in marks:
         (hid, rows) = m
@@ -69,7 +67,6 @@ def gc_mark_sweep():
 
 
 def gc_dealloc(items):
-
     for i in items:
         q = Hive.delete().where(Hive.hashid == i)
         q.execute()
@@ -78,7 +75,6 @@ def gc_dealloc(items):
 
 
 def dedup_dealloc(items):
-
     for i in items:
         print("Delete ", i)
         q = Hive.delete().where(Hive.rowid == i)

@@ -5,7 +5,6 @@
 # file system and SQLite issues
 """
 
-
 import threading
 from mastertext.objectstore import TextObjectStore
 
@@ -21,7 +20,6 @@ class StoreConnect:
         return obj
 
     def __init__(self):
-
         self.ObjectStoreConnect = TextObjectStore()
 
     def get_objstore(self):
@@ -37,7 +35,6 @@ class BorgCache:
 
     def __new__(cls, *args, **kwargs):  # noqa
         with cls._lock:
-
             if not cls._instance:
                 cls._instance = super(BorgCache, cls).__new__(cls)
         return cls._instance
