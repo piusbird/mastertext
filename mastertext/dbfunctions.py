@@ -1,7 +1,7 @@
 # MasterText db functions
-from peewee import *
-from mastertext.models import *
-from mastertext.utils import *
+from peewee import EncodingError
+from mastertext.models import Hive, database, Link
+from mastertext.utils import sha1_id_object, MasterTextError
 
 fsck_queries = {
     "link_table_rebuild": "select hashid from hive where hashid not in (select phash from link);"

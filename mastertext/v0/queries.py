@@ -1,5 +1,5 @@
 # queries.py common querys for MasterText, and other utility functions
-
+import datetime
 import hashlib
 import os
 import socket
@@ -42,7 +42,7 @@ def insert_text(dbc, text):
         buf = text.decode("iso-8859-1").encode("utf8")
 
         c = dbc.cursor()
-        hashid = sample_buffer(buf)
+        hashid = old_id_gen(buf)
         c.execute(ijqs, (hashid, ds, ourhost, buf))
         return hashid
 
@@ -64,7 +64,7 @@ def old_id_gen(buf):
     sample = buf if len(buf) < SAMPLE_SIZE else buf[0:smpEnd]
     try:
         m.update(sample.encode("utf-8"))
-    except:
+    except Exception:
         clean = sample.decode("iso-8859-1")
         m.update(clean.encode("utf-8"))
 

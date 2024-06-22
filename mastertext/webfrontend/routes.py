@@ -3,7 +3,7 @@
 import os
 from urllib.parse import urlparse
 
-url_parse = urlparse
+
 import gevent
 from peewee import OperationalError
 from flask import render_template, request, flash, redirect
@@ -22,6 +22,7 @@ from mastertext.objectstore import ObjectNotFoundError
 from mastertext.models import NewUser
 from mastertext.models import Error, WordImage
 
+url_parse = urlparse
 
 ts = StoreConnect().get_objstore()
 bc = app.cache
@@ -211,7 +212,7 @@ def word_cloud(hashid):
         return "Not a valid hash", 401
 
     try:
-        tmp = ts.retrieve_object(hashid)
+        _ = ts.retrieve_object(hashid)
     except ObjectNotFoundError as e:
         return str(e), 404
 

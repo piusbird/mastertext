@@ -3,8 +3,8 @@ from mastertext.objectstore import TextObjectStore, valid_hash, ObjectNotFoundEr
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gdk
-from bottle import Bottle, run, response
+from gi.repository import Gtk, Gdk  # noqa
+from bottle import Bottle, run, response  # noqa
 
 app = Bottle()
 tso = TextObjectStore()

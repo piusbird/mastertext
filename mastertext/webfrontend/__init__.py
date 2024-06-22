@@ -10,7 +10,7 @@ from flask_login import LoginManager
 from mastertext.models import NewUser
 from mastertext.singleton import BorgCache
 from mastertext.settings import Config
-from markupsafe import Markup
+from markupsafe import Markup  # noqa
 
 
 app = Flask(__name__)

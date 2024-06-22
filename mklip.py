@@ -10,13 +10,14 @@ from mastertext.utils import sha1_id_object
 from mastertext.objectstore import TextObjectStore, valid_hash, ObjectNotFoundError
 import gi  # noqa
 
-gi.require_version("Gtk", "3.0")
+
 import dbus  # noqa
 from dbus.mainloop.glib import DBusGMainLoop  # noqa
 import dbus.service  # noqa
 from gi.repository import Gtk, Gdk  # noqa
 from bottle import Bottle, run
 
+gi.require_version("Gtk", "3.0")
 
 END_OF_STACK = "deadbeef" * 5
 

@@ -40,5 +40,5 @@ def sha1_id_object(txt, enc="utf-8"):
 def list_from_file(fname):
     fp = open(fname)
     temp = fp.readlines()
-    rt = [l.strip() for l in temp]
+    rt = [line.strip() for line in temp]
     return rt
