@@ -2,13 +2,22 @@
 {% block content %}
 <script src="{{ url_for('static',  filename='bower_components/simplemde/dist/simplemde.min.js') }}">
 </script>
+<script src="{{ url_for('static',  filename='bower_components/markdown-it/markdown-it.min.js') }}">
+</script>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', 
     filename='bower_components/simplemde/dist/simplemde.min.css') }}">
 
 <h1>Blob Create</h1>
 
 
-    <form action="" method="post" novalidate>
+
+<div class="tab">
+    <button class="tablinks" id="defaultOpen" onclick="openTab(event, 'input-area')">Editor</button>
+    <button class="tablinks" onclick="openTab(event, 'document-rendered')">Preview</button>
+</div>
+<!-- Textarea for Markdown input -->
+<div id="input-area" class="tabcontent">
+    <form method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
             {{ form.body.label }}<br>
@@ -16,13 +25,85 @@
         </p>
         <p>
             Markdown is fully supported<br>
-             {% for error in form.body.errors %}
+            {% for error in form.body.errors %}
             <span style="color: peru;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>{{ form.submit() }}</p>
     </form>
-    <script>
-        var simplemde = new SimpleMDE();
-        </script>
+    <div class="tools">
+        <a href="#">Use The Advanced Editor</a>
+        <menu>
+            <li><button id="activate" onclick="activeAdvanced()">Activate</button></li>
+            <li><button id="kill" onclick="killAdvanced()">Kill</button></li>
+        </menu>
+    </div>
+</div>
+<!-- Div to display rendered Markdown -->
+<div id="document-rendered" class="tabcontent"></div>
+
+
+
+<script>
+    // Initialize markdown-it
+    const md = window.markdownit();
+    var simplemde = null;
+    // Function to render Markdown
+    function renderMarkdown() {
+        const markdownInput = document.getElementById('body').value;
+        const html = md.render(markdownInput);
+        document.getElementById('document-rendered').innerHTML = html;
+    }
+
+    function openTab(evt, cityName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    function activeAdvanced() {
+
+        if (simplemde == null) {
+            simplemde = new SimpleMDE({
+                element: document.getElementById("body")
+            });
+            simplemde.codemirror.on("change", function () {
+                const mdIn = simplemde.value();
+                var ourHtml = md.render(mdIn);
+                document.getElementById('document-rendered').innerHTML = ourHtml;
+
+            });
+        }
+    }
+
+    function killAdvanced() {
+        if (simplemde != null) {
+            simplemde.toTextArea();
+            simplemde = null;
+            document.getElementById('document-input').addEventListener('input', renderMarkdown);
+
+        }
+    }
+
+
+    // Render Markdown on initial load
+    document.getElementById('defaultOpen').click();
+    renderMarkdown();
+    document.getElementById('document-input').addEventListener('input', renderMarkdown);
+</script>
 {% endblock %}
