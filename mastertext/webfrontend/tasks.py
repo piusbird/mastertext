@@ -1,4 +1,4 @@
-"""Backround tasks for webapp"""
+"""Background tasks for webapp"""
 
 from io import BytesIO
 import base64
