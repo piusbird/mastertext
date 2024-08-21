@@ -1,10 +1,20 @@
 """Misc Database Queries for webfrontend"""
 
 from peewee import OperationalError
-from mastertext.models import Hive
+from mastertext.models import Hive, Bookmark
 from mastertext.utils import MasterTextError
 
+
 PERPAGE = 15
+
+
+def get_bookmarks(numents):
+    rl = []
+    for e in Bookmark.select().limit(numents):
+        ir = Hive.select(Hive.inject_date).where(Hive.hashid == e.phash).limit(1)
+        il = [i.inject_date for i in ir]
+        rl.append({"name": e.name, "id": e.phash, "date": il[0]})
+    return rl
 
 
 def get_latest(numents):

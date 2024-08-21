@@ -19,7 +19,7 @@ from mastertext.singleton import StoreConnect
 from mastertext.objectstore import valid_hash
 from mastertext.webfrontend.tasks import import_task, generate_wordimage_single
 from mastertext.objectstore import ObjectNotFoundError
-from mastertext.models import NewUser
+from mastertext.models import NewUser, Bookmark, Annotation
 from mastertext.models import Error, WordImage
 
 url_parse = urlparse
@@ -47,6 +47,7 @@ def index():
 
 
 @app.route("/d/<string:hashid>")
+@app.route("/d/<string:hashid>/")
 @login_required
 def view_document(hashid):
     flash_back_msgs()
@@ -121,6 +122,26 @@ def home():
     return render_template_string("Hello {{ current_user.username }}")
 
 
+@app.route("/b/<string:title>")
+@login_required
+def bookmark(title):
+    try:
+        result = Bookmark.get(Bookmark.name == title)
+        hid = result.phash
+        rdrloc = f"/d/{hid}/"
+        return redirect(rdrloc)
+    except OperationalError:
+        return 404
+
+
+@login_required
+@app.route("/bookmarks")
+def bookmarks():
+    flash_back_msgs()
+    bk = queries.get_bookmarks(1024)
+    return render_template("bookmarks.html", title="Named Things", stuff=bk)
+
+
 @login_required
 @app.route("/timeline")
 def timeline():
@@ -145,7 +166,11 @@ def create_blob():
         if blobinfo["count"] > 1:
             nwloc = blobinfo["hash"]
             return redirect(f"/d/{nwloc}")
-
+        if clone is not None and clone != blobinfo["hash"]:
+            link1 = Annotation.create(phash=clone, notehash=blobinfo["hash"], npos=42)
+            link1.save()
+            link2 = Annotation.create(phash=blobinfo["hash"], notehash=clone, npos=42)
+            link2.save()
     if clone is not None:
         form.body.data = ts.retrieve_object(clone)
         title = "Clone " + clone
