@@ -14,7 +14,6 @@ dnspython==2.6.1
 email-validator==1.2.1
 entrypoints==0.3
 flake8==5.0.4
-flake8-pylint==0.1.3
 Flask==2.3.2
 Flask-Admin==1.6.0
 Flask-BabelEx==0.9.4
@@ -66,8 +65,7 @@ toml==0.10.2
 tomli==2.0.1
 tomlkit==0.11.4
 Werkzeug==3.0.3
--e git+https://github.com/amueller/word_cloud@dbf7ab7753a36e1c12c0e1b36aeeece5023f39f9#egg=wordcloud
-wrapt==1.14.1
+wordcloud==1.9.3
 wtf-peewee==3.0.4
 WTForms==3.0.1
 zope.event==4.5.0
