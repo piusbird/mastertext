@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1> Collection of things with names </h1>
+{% for item in stuff %}
+
+<p><strong>{{item.name}} | {{item.date}}</strong> | <a href="/d/{{item.id}}"> {{ item.id }}</a></p>
+<hr>
+{% endfor %}
+
+{% endblock %}
