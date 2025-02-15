@@ -6,17 +6,18 @@ import signal
 import sys
 import os
 from threading import Thread
+from bottle import Bottle, run
 from mastertext.utils import sha1_id_object
 from mastertext.objectstore import TextObjectStore, valid_hash, ObjectNotFoundError
+
 import gi  # noqa
 
-gi.require_version("Gtk", "3.0") # noqa
+gi.require_version("Gtk", "3.0")  # noqa
 
 import dbus  # noqa
 from dbus.mainloop.glib import DBusGMainLoop  # noqa
 import dbus.service  # noqa
 from gi.repository import Gtk, Gdk  # noqa
-from bottle import Bottle, run
 
 
 END_OF_STACK = "deadbeef" * 5

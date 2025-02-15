@@ -257,6 +257,20 @@ def word_cloud(hashid):
     return 502
 
 
+@app.route("/d/<string:hashid>/links")
+@login_required
+def link_view(hashid):
+    fq = Annotation.select(Annotation.notehash).where(Annotation.phash == hashid)
+    flinks = [h for h in fq]
+    bq = Annotation.select(Annotation.phash).where(Annotation.notehash == hashid)
+    blinks = [h for h in bq]
+    metadata = {"hash": hashid, "forward": flinks, "back": blinks}
+    resp = render_template(
+        "binder.html", title="Linkview for " + hashid, docdata=metadata
+    )
+    return resp
+
+
 @app.route("/favicon.ico")
 def favicon():
     """returns a favicon"""

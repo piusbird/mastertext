@@ -1,7 +1,7 @@
 """
  MasterText Garbage Collector
-We Intened to build a content addressable file system from our Database schema;
-but you cannot enforce PRIMARY KEY constriants on a full text searchable table
+We Intended to build a content addressable file system from our Database schema;
+but you cannot enforce PRIMARY KEY constraints on a full text searchable table
 Thus in testing on V0 database duplicates were injected.
 
 Allowing duplicates expands the size of the on disk database by almost double,
@@ -36,7 +36,7 @@ def dedup_mark(hashlist):
 
 
 def dedup_sweep(marks):
-    destuction = []
+    destruction = []
     for m in marks:
         (hid, rows) = m
         try:
@@ -48,7 +48,7 @@ def dedup_sweep(marks):
             else:
                 # We should not get here
                 # TODO: This else is an error means
-                # that the refernce counter has gone bad
+                # that the reference counter has gone bad
                 # the usual way of solving this is to walk the b-trees
                 # and refresh the counter from that but as this is treeless
                 # I got nothing setting the counter to 1 avoids data loss
@@ -56,8 +56,8 @@ def dedup_sweep(marks):
                 # that's what we'll do, and if I'm wrong we'll change it
                 lk.count = 1
             lk.save()
-        destuction.extend(rows[1:])
-    return destuction
+        destruction.extend(rows[1:])
+    return destruction
 
 
 def gc_mark_sweep():

@@ -73,7 +73,7 @@ def migrate_add_users(username):
     passwd = getpass(f"Enter password for {username}: ")
     confirm = getpass("Confirm: ")
     if passwd != confirm:
-        click.echo("password missmatch")
+        click.echo("password mismatch")
         return 1
     hashed = generate_password_hash(passwd)
     with database:
@@ -94,7 +94,7 @@ def create_user(username):
     passwd = getpass(f"Enter password for {username}: ")
     confirm = getpass("Confirm: ")
     if passwd != confirm:
-        click.echo("password missmatch")
+        click.echo("password mismatch")
         return 1
     hashed = generate_password_hash(passwd)
     email = click.prompt(f"Email address for {username}: ", default="test@example.com")

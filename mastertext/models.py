@@ -15,7 +15,9 @@ from flask_login import UserMixin as LUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 
-database = SqliteExtDatabase(dbpath)  # set database at run time
+database = SqliteExtDatabase(
+    dbpath, pragmas={"journal_mode": "wal", "cache_size": -1024 * 64}
+)  # set database at run time
 
 
 class UnknownField(object):

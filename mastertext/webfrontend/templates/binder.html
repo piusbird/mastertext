@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<a href="{{url_for('view_document', hashid=docdata.hash)}}"> 🏠 Document Home</a> -
+<a href="{{url_for('create_blob', clone=docdata.hash)}}"> 🪴
+    Clone
+</a> -
+<a href="{{url_for('orig_document', hashid=docdata.hash) }}">📖 View Original</a>
+<a href="{{url_for('word_cloud', hashid=docdata.hash) }}"> ☁️ Word Cloud</a>
+<hr>
+<h1> Link Viewer for {{ docdata.hash }} </h1>
+
+<article>
+    <div class="cm">
+        <h2> Forward links</h2>
+        <ul>
+            {% for item in docdata.forward %}
+            <li><a href="/d/{{item}}"> {{item}}</a></li>
+        </ul>
+        {% endfor %}
+        <hr>
+        <h2> Back links</h2>
+        <ul>
+            {% for item in docdata.back %}
+            <li><a href="/d/{{item}}"> {{item}}</a></li>
+        </ul>
+        {% endfor %}
+
+    </div>
+</article>
+{% endblock %}

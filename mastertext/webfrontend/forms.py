@@ -2,7 +2,7 @@
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, URL
+from wtforms.validators import DataRequired, URL, Optional
 from wtforms.widgets import TextArea
 
 
@@ -25,6 +25,7 @@ class SearchForm(FlaskForm):
 class CreateForm(FlaskForm):
     """Blob Creation form"""
 
+    bkmark = StringField("Name your Creation", validators=[Optional(), DataRequired()])
     body = StringField("Create A Blob", widget=TextArea(), validators=[DataRequired()])
     submit = SubmitField("New")
 

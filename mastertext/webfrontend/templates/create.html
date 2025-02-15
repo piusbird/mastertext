@@ -12,14 +12,15 @@
 
 
 <div class="tab">
-    <button class="tablinks" id="defaultOpen" onclick="openTab(event, 'input-area')">Editor</button>
-    <button class="tablinks" onclick="openTab(event, 'document-rendered')">Preview</button>
+    <button type="button" class="tablinks" id="defaultOpen" onclick="openTab(event, 'input-area')">Editor</button>
+    <button type="button" class="tablinks" onclick="openTab(event, 'document-rendered')">Preview</button>
 </div>
 <!-- Textarea for Markdown input -->
 <div id="input-area" class="tabcontent">
     <form method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
+
             {{ form.body.label }}<br>
             {{ form.body(cols="80", rows="24") }}
         </p>
@@ -34,8 +35,8 @@
     <div class="tools">
         <a href="#">Use The Advanced Editor</a>
         <menu>
-            <li><button id="activate" onclick="activeAdvanced()">Activate</button></li>
-            <li><button id="kill" onclick="killAdvanced()">Kill</button></li>
+            <li><button id="activate" onclick="activeAdvanced()">Advanced</button></li>
+            <li><button id="kill" onclick="killAdvanced()">Basic</button></li>
         </menu>
     </div>
 </div>
