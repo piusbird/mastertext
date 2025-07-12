@@ -26,7 +26,7 @@ Flask-WTF
 fonttools==4.43.0
 gevent==23.9.1
 greenlet
-gunicorn==22.0.0
+gunicorn==23.0.0
 idna==3.7
 isort==5.10.1
 itsdangerous==2.1.2
