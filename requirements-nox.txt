@@ -24,7 +24,7 @@ Flask-Misaka
 flask-peewee==3.0.4
 Flask-Principal==0.4.0
 Flask-WTF
-fonttools==4.43.0
+fonttools==4.61.0
 gevent==23.9.1
 greenlet
 gunicorn==23.0.0
